@@ -1,0 +1,326 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{float}
+
+\title{INFS4203/7203 Data Mining \\ Tutorial Week 2 - Introduction to Classification \\ Semester 2, 2025}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Question 1/4: Imputation of missing feature values and feature value normalization}
+
+Consider a dataset in Table 1.
+
+1. Perform missing value imputation by all-class and class-specific values!
+
+2. Perform max-min feature normalization!
+
+3. Perform z-score feature normalization!
+
+4. (Extra) Does it make sense to apply normalization on categorical (nominal) features?
+Justify your opinions!
+
+\begin{table}[H]
+  \centering
+  \caption{A dataset of 6 data points. The right most column is the target classification label.}
+  \begin{tabular}{c c c c c c}
+    \toprule
+    Index & Age  & Home Distance & Browser & Caffeine Level & Hair Style \\
+    \midrule
+    1     & 17   & 100           & Chrome  & High           & Long       \\
+    2     & 20   & 50            & Chrome  & Medium         & Long       \\
+    3     & null & 750           & Firefox & High           & Long       \\
+    4     & 27   & 1000          & Chrome  & Low            & Short      \\
+    5     & 26   & 9500          & Safari  & Low            & Short      \\
+    6     & 24   & 7000          & Firefox & null           & Short      \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Answer:}
+
+\paragraph{For Age}
+\begin{description}
+  \item[Numerical:] Fill with the average value of the feature.
+\end{description}
+
+\begin{itemize}
+  \item All-class: $(17 + 20 + 27 + 26 + 24) / 5 = 22.8$
+  \item Class-specific: $(17 + 20) / 2 = 18.5$
+\end{itemize}
+
+\paragraph{For Caffeine Level}
+\begin{description}
+  \item[Nominal:] Fill with the most common feature value
+\end{description}
+\begin{itemize}
+  \item All-class: either High or Low
+  \item Class-specific: Low
+\end{itemize}
+
+\paragraph{Max-min normalization}
+\begin{equation}
+  x' = \frac{x - x_{\min}}{x_{\max} - x_{\min}}
+\end{equation}
+
+\begin{itemize}
+  \item Age: $\max = 27, \min = 17$
+        \begin{align*}
+           & (17-17)/(27-17) = 0      \\
+           & (20-17)/(27-17) = 0.3    \\
+           & (18.5-17)/(27-17) = 0.15 \\
+           & (27-17)/(27-17) = 1      \\
+           & (26-17)/(27-17) = 0.9    \\
+           & (24-17)/(27-17) = 0.7
+        \end{align*}
+  \item Home Distance: $\max = 9500, \min = 50$
+        \begin{align*}
+           & (100-50)/(9500-50) = 0.0053  \\
+           & (50-50)/(9500-50) = 0        \\
+           & (750-50)/(9500-50) = 0.0741  \\
+           & (1000-50)/(9500-50) = 0.1005 \\
+           & (9500-50)/(9500-50) = 1      \\
+           & (7000-50)/(9500-50) = 0.7354
+        \end{align*}
+\end{itemize}
+
+\paragraph{Z-Score normalization:}
+\begin{equation}
+  x' = \frac{x - \mu}{\sigma}
+\end{equation}
+
+\begin{itemize}
+  \item Mean:
+        \begin{equation}
+          \mu = \frac{1}{n} \sum_{i=1}^{n} x_i
+        \end{equation}
+        \begin{equation*}
+          \mu = \frac{17+20+18.5+27+26+24}{6} = \frac{132.5}{6} \approx 22.08
+        \end{equation*}
+  \item Standard deviation:
+        \begin{equation}
+          \sigma = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \mu)^2}
+        \end{equation}
+        \begin{equation*}
+          \sigma = \sqrt{
+            \frac{
+              \begin{split}
+                (17-22.08)^2 + (20-22.08)^2 + (18.5-22.08)^2 \\
+                + (27-22.08)^2 + (26-22.08)^2 + (24-22.08)^2
+              \end{split}
+            }{6-1}
+          }
+          = \sqrt{17.24168} \approx 4.15
+        \end{equation*}
+  \item Calculate each feature value:
+        \begin{align*}
+           & (17-22.08)/4.15 = -1.22   \\
+           & (20-22.08)/4.15 = -0.50   \\
+           & (18.5-22.08)/4.15 = -0.86 \\
+           & (27-22.08)/4.15 = 1.19    \\
+           & (26-22.08)/4.15 = 0.95    \\
+           & (24-22.08)/4.15 = 0.46
+        \end{align*}
+\end{itemize}
+
+It does not make sense, because there are non-numeric variables representing categories without any inherent order.
+\begin{itemize}
+  \item Mathematically meaningless
+  \item Implies ordinal relationships where none exist
+\end{itemize}
+
+% ----------------------
+\section*{Question 2/4: Classifier evaluation: accuracy and F1-score on balanced datasets}
+
+Consider the following true (ground-truth) class labels y and predicted class labels $\hat{y}_a$ and $\hat{y}_b$ from
+classifiers A and B, respectively, for 6 data points (instances).
+
+\[
+  y = [1, 1, 1, 0, 0, 0],
+\]
+\[
+  \hat{y}_a = [0, 1, 0, 0, 0, 1],
+\]
+\[
+  \hat{y}_b = [0, 0, 1, 1, 1, 0].
+\]
+
+1. Calculate the accuracy and F1-score of Classifier A!
+
+2. Calculate the accuracy and F1-score of Classifier B!
+
+3. Which classifier is the best based on their accuracy scores?
+
+4. Which classifier is the best based on their F1-scores?
+
+\textbf{Answer:}
+
+\subsection*{For Classifier A}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ccc}
+    \toprule
+      & 1     & 0     \\
+    \midrule
+    1 & TP: 1 & FN: 2 \\
+    0 & FP: 1 & TN: 2 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{align*}
+  \text{Accuracy}  & = \frac{TP+TN}{n} = \frac{1+2}{6} = \frac{1}{2}                \\
+  \text{Precision} & = \frac{TP}{TP + FP} = \frac{1}{1+1} = \frac{1}{2}             \\
+  \text{Recall}    & = \frac{TP}{TP+FN} = \frac{1}{1+2} = \frac{1}{3}               \\
+  \text{F1}        & = \frac{2}{\frac{1}{\text{Precision}}+\frac{1}{\text{Recall}}}
+  = \frac{\frac{1}{3}}{\frac{5}{6}} = \frac{2}{5}
+\end{align*}
+
+\subsection*{For Classifier B}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ccc}
+    \toprule
+      & 1     & 0     \\
+    \midrule
+    1 & TP: 1 & FN: 2 \\
+    0 & FP: 2 & TN: 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{align*}
+  \text{Accuracy}  & = \frac{TP+TN}{n} = \frac{1+1}{6} = \frac{1}{3}    \\
+  \text{Precision} & = \frac{TP}{TP + FP} = \frac{1}{1+2} = \frac{1}{3} \\
+  \text{Recall}    & = \frac{TP}{TP+FN} = \frac{1}{1+2} = \frac{1}{3}   \\
+  \text{F1}        & = \frac{\frac{2}{9}}{\frac{2}{3}} = \frac{1}{3}
+\end{align*}
+
+\subsection*{}
+A, because $\frac{1}{2} > \frac{1}{3}$
+
+\subsection*{}
+A, $\frac{2}{5} > \frac{1}{3}$
+
+% ----------------------
+\section*{Question 3/4: Classifier evaluation: accuracy and F1-score on imbalanced datasets}
+
+1. Consider a cancer dataset, where 85 people have cancer and the remaining 201 do not. Classifier $\alpha$ always predicts that someone has cancer. Classifier $\beta$ always predicts that someone does not have cancer. Compare these two degenerated classifiers $\alpha$ and $\beta$ in terms of their accuracy and F1-scores! Which classifier is better (more preferable) for this domain?
+
+2. Consider a city of 1 million people, where there are 10 COVID-positive individuals. A classifier predicts that there are 1000 COVID-positive individuals (including 10 individuals who are indeed COVID-positive), and the remaining 999,000 are COVID-negative. Analyze this classifier in terms of its accuracy and F1-score!
+
+\textbf{Answer:}
+
+\subsection*{Classifier $\alpha$}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ccc}
+    \toprule
+              & cancer  & no cancer \\
+    \midrule
+    cancer    & TP: 85  & FN: 0     \\
+    no cancer & FP: 201 & TN: 0     \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{align*}
+  \text{accuracy}  & = \frac{85}{286} \approx 0.29     \\
+  \text{precision} & = \frac{85}{85+201} \approx 0.297 \\
+  \text{recall}    & = 1                               \\
+  \text{F1-score}  & = \frac{2}{0.297^{-1}+1^{-1}}
+\end{align*}
+
+\subsection*{Classifier $\beta$}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ccc}
+    \toprule
+              & cancer & no cancer \\
+    \midrule
+    cancer    & TP: 0  & FN: 85    \\
+    no cancer & FP: 0  & TN: 201   \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{align*}
+  \text{accuracy}  & = \frac{201}{286} \approx 0.703 \\
+  \text{precision} & = \text{undefined}              \\
+  \text{recall}    & = 0                             \\
+  \text{F1-score}  & = \text{undefined}
+\end{align*}
+
+\subsection*{COVID example}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ccc}
+    \toprule
+             & Positive & Negative    \\
+    \midrule
+    Positive & TP: 10   & FN: 0       \\
+    Negative & FP: 990  & TN: 999,000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section*{(Extra) Question 4/4: Classification pipeline using cross-validation (CV)}
+
+Re-arrange the following 20 steps into a correct order of a classification pipeline with 3-fold CV.
+There may be multiple correct orders out of 20! possible orders.
+
+The nomenclature is as follows.
+
+\begin{itemize}
+  \item c($\cdot$): a trained classifier model with some arguments inside the brackets.
+  \item a($\cdot$): an accuracy score with some arguments inside the brackets.
+  \item mm: max-min normalization technique or the corresponding result
+  \item zs: z-score normalization technique or the corresponding result
+  \item avg: average, the averaging operation or the corresponding result
+\end{itemize}
+
+\begin{enumerate}
+  \item Validate the trained classifier c(mm, 1, 3) using fold-2 to obtain its accuracy a(mm, 2).
+  \item Train a classifier with max-min normalization using fold-1 and fold-2. Call the resulting
+        trained classifier as c(mm, 1, 2).
+  \item Validate the trained classifier c(mm, 1, 2) using fold-3 to obtain its accuracy a(mm, 3).
+  \item Validate the trained classifier c(zs, 1, 3) using fold-2 to obtain its accuracy a(zs, 2).
+  \item Train a classifier with the best hyperparameter value on training set (900 data points). Call
+        the resulting trained classifier as c(zs). The training accuracy a(zs, train) may be obtained.
+  \item Train a classifier with max-min normalization using fold-2 and fold-3. Call the resulting
+        trained classifier as c(mm, 2, 3).
+  \item Compare the average validation accuracy: a(zs, avg) versus a(mm, avg).
+        Say, a(zs, avg) $>$ a(mm, avg). Thus, the best hyperparameter value is z-score normalization.
+  \item Validate the trained classifier c(mm, 2, 3) using fold-1 to obtain its accuracy a(mm, 1).
+  \item Split the dataset into training and testing sets. There 1000 data points in total, therefore 900
+        training data points and 100 testing data points.
+  \item Train a classifier with max-min normalization using fold-1 and fold-3. Call the resulting
+        trained classifier as c(mm, 1, 3).
+  \item Average the validation accuracy of 3 classifiers with max-min normalization.
+        That is, a(mm, avg) = [a(mm, 1) + a(mm, 2) + a(mm, 3)]/3.
+  \item Test the trained classifier c(zs) on testing set (100 data points) to obtain its the test accuracy
+        a(zs, test). This a(zs, test) indicates the (approximate) accuracy on unseen data.
+  \item Validate the trained classifier c(zs, 1, 2) using fold-3 to obtain its accuracy a(zs, 3).
+  \item Train a classifier with z-score normalization using fold-2 and fold-3. Call the resulting trained
+        classifier as c(zs, 2, 3).
+  \item Split the training set (900 data points) into 3 folds equally. Those 3 folds are called fold-1,
+        fold-2 and fold-3. There are 300 data points per fold.
+  \item Validate the trained classifier c(zs, 2, 3) using fold-1 to obtain its accuracy a(zs, 1).
+  \item Determine a set of hyperparameter values to tune. Here, there is one hyperparameter, i.e.
+        the normalization types, namely max-min versus z-score normalizations.
+  \item Train a classifier with z-score normalization using fold-1 and fold-3. Call the resulting trained
+        classifier as c(zs, 1, 3).
+  \item Train a classifier with z-score normalization using fold-1 and fold-2. Call the resulting trained
+        classifier as c(zs, 1, 2).
+  \item Average the validation accuracy of 3 classifiers with z-score normalization.
+        That is, a(zs, avg) = [a(zs, 1) + a(zs, 2) + a(zs, 3)]/3.
+\end{enumerate}
+
+
+\end{document}

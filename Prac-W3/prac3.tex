@@ -1,0 +1,76 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{INFS4203/7203 Data Mining \\ Tutorial Week 3 - Decision Tree}
+\author{Semester 2, 2025}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Question 1: Decision Tree}
+
+A university hired the cyber security expert, Alice, to identify potential cyber attacks that are happening on their network. Over the course of one week, Alice recorded the most frequently visited website and the number of failed login attempts for ten users, along with a label that indicates if the user had performed any attacks on the network. The data can be found in Table~\ref{tab:train}.
+
+\begin{table}[h!]
+  \centering
+  \caption{Training Data}
+  \label{tab:train}
+  \begin{tabular}{c l c l}
+    \toprule
+    \textbf{User} & \textbf{Website} & \textbf{Login} & \textbf{Label} \\
+    \midrule
+    1             & google.com       & 0              & Benign         \\
+    2             & google.com       & 4              & Benign         \\
+    3             & google.com       & 20             & Benign         \\
+    4             & google.com       & 30             & Attack         \\
+    5             & reddit.com       & 3              & Benign         \\
+    6             & reddit.com       & 32             & Attack         \\
+    7             & reddit.com       & 29             & Attack         \\
+    8             & howtohack.com    & 3              & Benign         \\
+    9             & howtohack.com    & 10             & Attack         \\
+    10            & howtohack.com    & 47             & Attack         \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+To avoid susceptibility to attacks in future, the university wishes to use this data to create a classifier that is able to detect attacks that happen in the future.
+
+\begin{enumerate}
+  \item Construct a decision tree based on \textbf{information gain} using the training data in Table~\ref{tab:train} to predict whether a user on the network will perform a cyber attack given the features ``Website'' and ``Login Attempts''.
+
+  \item Use the constructed decision tree to make predictions on the data provided in Table~\ref{tab:test}.
+
+        \begin{table}[h!]
+          \centering
+          \caption{Testing Data}
+          \label{tab:test}
+          \begin{tabular}{c l c l}
+            \toprule
+            \textbf{User} & \textbf{Website} & \textbf{Login} & \textbf{Label}  \\
+            \midrule
+            11            & google.com       & 5              & \textit{Benign} \\
+            12            & google.com       & 15             & \textit{Benign} \\
+            13            & reddit.com       & 15             & \textit{Attack} \\
+            14            & howtohack.com    & 100            & \textit{Attack} \\
+            \bottomrule
+          \end{tabular}
+        \end{table}
+
+  \item The ground truth labels of the testing data were \textbf{Benign, Benign, Benign, Attack} for Users 11, 12, 13 and 14, respectively. Compute the \textbf{accuracy} and \textbf{F1-score} of the classifier on the test set.
+
+  \item What effect does \textbf{feature normalization} have, if any, during the construction of a decision tree?
+
+  \item Suppose we wish to use our decision tree from Question 1 to classify a new user whose most visited website was \texttt{youtube.com} and they had 20 failed login attempts. Can our decision tree assign a label?
+
+  \item Suggest a modification to our decision tree that would allow it to assign a label to the user in Question 5.
+
+  \item (Extra) Go back to Question 1 and try to find \textbf{all possible decision trees} that we could have used instead. Which one gives the best classification performance in terms of \textbf{accuracy} and \textbf{F1-score}? If we combined these into an \textbf{ensemble}, would we expect an increase in performance?
+\end{enumerate}
+
+\end{document}
