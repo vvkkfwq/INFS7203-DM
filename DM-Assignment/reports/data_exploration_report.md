@@ -44,9 +44,9 @@
 
 **影响**: 类别不平衡可能导致模型偏向多数类，需要采用以下策略：
 
-- [ ] 重采样技术（SMOTE、ADASYN 等）
-- [ ] 调整类别权重
-- [ ] 使用平衡的评估指标（F1-score、AUC-ROC 等）
+- [ ] 调整类别权重（class_weight='balanced'）
+- [ ] 使用平衡的评估指标（F1-score、Precision-Recall）
+- [ ] 分层交叉验证（StratifiedKFold）
 
 ---
 
@@ -63,14 +63,6 @@
 - **数值型特征**: 25/25 个特征有缺失值
 - **分类特征**: 18/18 个特征有缺失值
 - **缺失数量**: 每个特征都缺失 1,085 个值（约 10%）
-
-### 重要发现
-
-所有特征的缺失数量完全一致（都是 1,085 个），这表明：
-
-- 存在 1,085 行样本的所有特征都是缺失的
-- 可能是数据收集过程中的系统性问题
-- 这些完整缺失的行可能需要特殊处理
 
 ---
 
@@ -163,17 +155,16 @@ Nom_Col27: C1_c6(3100), C1_c1(2163), C1_c10(1667)...
 
 - **挑战**: 3:1 的不平衡比例
 - **策略**:
-  - SMOTE 过采样
-  - 类别权重调整
+  - 类别权重调整（class_weight='balanced'）
+  - 分层交叉验证
   - 阈值优化
 
 ### 5. 维度问题
 
 - **挑战**: 43 个特征可能导致维度诅咒
 - **策略**:
-  - 特征选择（相关性、重要性）
-  - 降维技术（PCA、LDA）
-  - 正则化方法
+  - 特征选择（相关性分析）
+  - 基于模型的特征重要性分析
 
 ---
 
@@ -221,45 +212,40 @@ Nom_Col27: C1_c6(3100), C1_c1(2163), C1_c10(1667)...
 
 ### 第三阶段：类别平衡
 
-1. **重采样策略**
+1. **类别权重调整**
    ```python
-   from imblearn.over_sampling import SMOTE
-   smote = SMOTE(random_state=42)
+   # 在模型训练时使用
+   model = RandomForestClassifier(class_weight='balanced', random_state=42)
    ```
 
 ---
 
 ## 🔍 建议的建模策略
 
-### 推荐算法
+### 推荐算法（Week 2-8 技术）
 
-考虑到数据特征，推荐以下算法：
+考虑到数据特征和课程要求，推荐以下算法：
 
-1. **集成方法**
+1. **Decision Tree**: 基准模型，可解释性强
 
-   - **Random Forest**: 对缺失值和混合数据类型鲁棒
-   - **XGBoost**: 内置缺失值处理，性能优秀
-   - **LightGBM**: 快速，对分类特征友好
+2. **Random Forest**: 集成方法，对混合数据类型鲁棒
 
-2. **线性模型**
+3. **k-Nearest Neighbour (k-NN)**: 适用于分类问题
 
-   - **Logistic Regression**: 基准模型，可解释性强
-   - **Ridge/Lasso**: 正则化处理高维问题
+4. **Naïve Bayes**: 快速训练，适合多特征场景
 
 ### 评估策略
 
 由于类别不平衡，推荐使用：
 
-- **F1-score**: 平衡精确率和召回率
-- **AUC-ROC**: 整体分类性能
-- **Precision-Recall 曲线**: 特别关注少数类
-- **分层交叉验证**: 保持类别比例
+- **F1-score**: 平衡精确率和召回率（项目主要指标）
+- **Accuracy**: 整体准确率（项目次要指标）
+- **分层交叉验证**: StratifiedKFold 保持类别比例
 
 ### 超参数优化
 
-- **网格搜索**: 系统性参数调优
-- **随机搜索**: 高维参数空间
-- **贝叶斯优化**: 高效参数搜索
+- **GridSearchCV**: 系统性网格搜索参数调优
+- **随机种子固定**: random_state=42 确保可复现性
 
 ---
 
@@ -289,10 +275,10 @@ Nom_Col27: C1_c6(3100), C1_c1(2163), C1_c10(1667)...
 
 ### 开发环境
 
-- **Python**: 数据科学生态系统
-- **主要库**: pandas, numpy, scikit-learn, matplotlib, seaborn
-- **建模库**: xgboost, lightgbm, catboost
-- **评估库**: imbalanced-learn, matplotlib, seaborn
+- **Python**: 3.8+
+- **主要库**: pandas, numpy, scikit-learn
+- **可视化库**: matplotlib, seaborn
+- **允许的模型**: DecisionTreeClassifier, RandomForestClassifier, KNeighborsClassifier, GaussianNB/MultinomialNB
 
 ### 计算资源
 

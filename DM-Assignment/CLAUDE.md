@@ -72,7 +72,7 @@ DM-Assignment/
 **Missing Value Pattern**:
 
 - Exactly 1085 samples have missing values across ALL features
-- Pattern suggests complete row-level missingness
+- Rows with at least one missing value: 10734 out of 10853 (98.90%)
 
 ## Development Workflow
 

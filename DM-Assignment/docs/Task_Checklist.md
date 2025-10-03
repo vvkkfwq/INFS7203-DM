@@ -16,34 +16,36 @@
 
 ### Phase 1: 探索性数据分析 (EDA)
 
-- [ ] 下载并加载 train.csv 和 test_data.csv
-- [ ] 检查数据形状和基本信息
-- [ ] 分析标签分布 (是否平衡)
-- [ ] 统计缺失值比例
-- [ ] 可视化数值特征分布
-- [ ] 分析类别特征的唯一值数量
-- [ ] 检查异常值
-- [ ] 分析特征与标签的关系
-- [ ] 撰写 EDA 报告
+- [x] 下载并加载 train.csv 和 test_data.csv
+- [x] 检查数据形状和基本信息
+- [x] 分析标签分布 (是否平衡)
+- [x] 统计缺失值比例
+- [x] 可视化数值特征分布
+- [x] 分析类别特征的唯一值数量
+- [x] 检查异常值
+- [x] 分析特征与标签的关系
+- [x] 撰写 EDA 报告
 
 **输出**: EDA 报告 + 可视化图表
 
 ### Phase 2: 预处理实验
 
-- [ ] 设计 3-5 种缺失值处理方案
-  - 方案 1: 数值 median/类别 mode
-  - 方案 2: 数值 mean/类别 mode
-  - 方案 3: 删除高缺失样本
-- [ ] 设计 2-3 种特征缩放方案
+- [x] 设计 4 种缺失值处理方案
+  - 方案 1: 全局数值 mean/类别 mode
+  - 方案 2: 全局数值 median/类别 mode
+  - 方案 3: 全局 Constant Filling distinct special value
+  - 方案 4: Class-Specific Imputation with mean/mode
+- [x] 设计类别编码方案
+  - OrdinalEncoder ✅
+  - One-Hot Encoding
+  - Label Encoding
+- [ ] 设计 2-3 种特征缩放方案（树模型暂不需要）
   - StandardScaler
   - MinMaxScaler
   - RobustScaler
-- [ ] 设计类别编码方案
-  - One-Hot Encoding
-  - Label Encoding
-- [ ] 使用交叉验证对比各方案
-- [ ] 记录每个方案的 CV F1 分数
-- [ ] 选择最佳预处理组合
+- [x] 使用交叉验证对比各方案
+- [x] 记录每个方案的 CV F1 分数
+- [x] 选择最佳预处理组合
 
 **输出**: 最佳预处理方案 + 实验对比表
 

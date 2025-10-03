@@ -101,7 +101,6 @@ $RECYCLE.BIN/
 *~
 
 # Data files (consider if you want to track these)
-*.csv
 *.xlsx
 *.json
 *.pickle
@@ -119,3 +118,4 @@ $RECYCLE.BIN/
 results/
 outputs/
 logs/
+DM-Assignment/notebooks/00_testbook.ipynb
