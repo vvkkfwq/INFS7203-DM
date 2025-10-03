@@ -5,6 +5,7 @@ Contains all constants and hyperparameters.
 
 import random
 import numpy as np
+from pathlib import Path
 
 # ==================== REPRODUCIBILITY ====================
 RANDOM_SEED = 42
@@ -15,16 +16,17 @@ np.random.seed(RANDOM_SEED)
 
 
 # ==================== FILE PATHS ====================
-DATA_DIR = "data"
-TRAIN_FILE = f"{DATA_DIR}/train.csv"
-TEST_FILE = f"{DATA_DIR}/test_data.csv"
-RESULTS_DIR = "results"
+PROJECT_ROOT = Path(__file__).parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+TRAIN_FILE = DATA_DIR / "train.csv"
+TEST_FILE = DATA_DIR / "test_data.csv"
+RESULTS_DIR = PROJECT_ROOT / "results"
 
 
 # ==================== STUDENT INFO ====================
 STUDENT_ID = "s4860387"
 SUBMISSION_EXTENSION = "infs4203"
-RESULT_FILE = f"{RESULTS_DIR}/{STUDENT_ID}.{SUBMISSION_EXTENSION}"
+RESULT_FILE = RESULTS_DIR / f"{STUDENT_ID}.{SUBMISSION_EXTENSION}"
 
 
 # ==================== FEATURE COLUMNS ====================

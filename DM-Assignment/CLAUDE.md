@@ -102,35 +102,46 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
    - Missing value imputation: SimpleImputer (median for numerical, mode for categorical)
    - Categorical encoding: OrdinalEncoder
    - All tests passing
-4. ✅ **Baseline Models Training**: All 4 models trained with 5-fold CV
-   - Decision Tree: F1=0.5952 (BEST)
-   - Random Forest: F1=0.5742 ± 0.0226
-   - Naïve Bayes: F1=0.3997 ± 0.0233
-   - k-NN: F1=0.2003 ± 0.0075 (needs feature scaling)
+4. ✅ **Baseline Models Training**: All 4 models trained with 5-fold CV using unified comparison script
+   - Script location: `scripts/compare_baseline_models.py`
+   - Results saved: `results/baseline_models_comparison.csv`
+   - Performance ranking (by F1 Score):
+     1. Random Forest: F1=0.5742 ± 0.0226 (BEST)
+     2. Decision Tree: F1=0.5344 ± 0.0185
+     3. Naïve Bayes: F1=0.3997 ± 0.0233
+     4. k-NN: F1=0.2003 ± 0.0075 (needs feature scaling)
 
 ### Baseline Model Results Summary
 
-| Model | Accuracy | F1 Score | Notes |
-|-------|----------|----------|-------|
-| Decision Tree | ~0.856 | 0.5952 | Best baseline, ready for tuning |
-| Random Forest | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Good stability, high tuning potential |
-| Naïve Bayes | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance |
-| k-NN | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler |
+| Model              | Accuracy        | F1 Score        | Notes                                 |
+| ------------------ | --------------- | --------------- | ------------------------------------- |
+| Random Forest      | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Best baseline, high tuning potential  |
+| Decision Tree      | 0.7650 ± 0.0067 | 0.5344 ± 0.0185 | Good baseline, ready for tuning       |
+| Naïve Bayes        | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance                  |
+| k-NN               | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler            |
 
 **Key Findings**:
-- Tree-based models (DT, RF) significantly outperform k-NN and NB
+
+- Tree-based models (RF, DT) significantly outperform k-NN and NB
+- Random Forest shows best F1 Score (0.5742) with good stability
 - k-NN performance is poor due to lack of feature scaling
-- Focus tuning efforts on Random Forest and Decision Tree
-- Current best F1=0.5952, need to reach ≥0.65 for full marks
+- **Gap to target**: Need 13.2% improvement to reach F1 ≥ 0.65 for full marks
+- **Priority**: Focus hyperparameter tuning on Random Forest and Decision Tree
 
 ### Next Steps (From Task_Checklist.md)
 
-1. **Performance Comparison Table**: Create unified comparison script
-2. **Hyperparameter Tuning**: GridSearchCV on Random Forest and Decision Tree
-3. **k-NN with Scaling**: Optional - test k-NN with StandardScaler
-4. **Ensemble Methods**: Optionally try Voting Classifier
-5. **Final Model**: Train on full dataset with fixed seed (42)
-6. **Code Conversion**: Convert all .ipynb to .py files
+1. ✅ ~~**Performance Comparison Table**: Create unified comparison script~~ (COMPLETED)
+2. **Hyperparameter Tuning**: GridSearchCV on Random Forest and Decision Tree (IN PROGRESS)
+   - Priority 1: Random Forest (best baseline F1=0.5742)
+   - Priority 2: Decision Tree (second best F1=0.5344)
+   - Optional: k-NN with StandardScaler
+3. **Final Model Selection**: Choose best tuned model
+4. **Create main.py**: Unified entry point for final submission
+5. **Generate Submission Files**:
+   - Train final model on full dataset
+   - Generate predictions on test set
+   - Create `s4860387.infs4203` result file
+6. **Code Packaging**: Package all code for submission
 
 ## Development Commands
 
@@ -139,6 +150,13 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 ```bash
 # Test preprocessing pipeline
 python test/test_preprocessing.py
+
+# Compare baseline models (completed)
+python scripts/compare_baseline_models.py
+
+# Hyperparameter tuning (next steps)
+python scripts/tune_random_forest.py      # To be created
+python scripts/tune_decision_tree.py      # To be created
 
 # Run main pipeline (to be implemented)
 python main.py
@@ -209,19 +227,29 @@ Example:
 
 ## Current Status
 
-**Completed**:
+**Completed (Phase 1-3)**:
 
 - ✅ Data exploration and analysis
-- ✅ Missing value pattern identification
+- ✅ Missing value pattern identification and experiments
 - ✅ Feature distribution analysis
 - ✅ Project structure setup
-- ✅ Preprocessing pipeline implementation
+- ✅ Preprocessing pipeline implementation and testing
+- ✅ Baseline models training (all 4 models)
+- ✅ Performance comparison table generation
 
-**To Do**:
+**In Progress (Phase 4)**:
 
-- Baseline model training
-- Hyperparameter tuning
-- Final model selection
-- Code conversion (.ipynb → .py)
-- Result file generation
-- Documentation completion
+- 🔄 Hyperparameter tuning for Random Forest
+- 🔄 Hyperparameter tuning for Decision Tree
+
+**To Do (Phase 5-6)**:
+
+- ⏳ Final model selection and training
+- ⏳ Create main.py entry point
+- ⏳ Generate test predictions
+- ⏳ Create submission result file (s4860387.infs4203)
+- ⏳ Package code for submission (s4860387.zip)
+- ⏳ Write README.md documentation
+- ⏳ Create requirements.txt
+
+**Note**: Please refer to `docs/Task_Checklist.md` for detailed task breakdown and `docs/Project_Requirements.md` for submission requirements.
