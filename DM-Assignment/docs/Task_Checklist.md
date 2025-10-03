@@ -58,9 +58,9 @@
 - [x] 创建项目代码结构
 - [x] 实现预处理管道
 - [x] 训练 Decision Tree (默认参数)
-- [ ] 训练 Random Forest (默认参数)
-- [ ] 训练 k-NN (默认参数)
-- [ ] 训练 Naïve Bayes (默认参数)
+- [x] 训练 Random Forest (默认参数)
+- [x] 训练 k-NN (默认参数)
+- [x] 训练 Naïve Bayes (默认参数)
 - [ ] 5 折交叉验证评估
 - [ ] 记录每个模型的 Accuracy 和 F1
 - [ ] 创建性能对比表

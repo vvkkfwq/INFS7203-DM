@@ -102,14 +102,35 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
    - Missing value imputation: SimpleImputer (median for numerical, mode for categorical)
    - Categorical encoding: OrdinalEncoder
    - All tests passing
+4. ✅ **Baseline Models Training**: All 4 models trained with 5-fold CV
+   - Decision Tree: F1=0.5952 (BEST)
+   - Random Forest: F1=0.5742 ± 0.0226
+   - Naïve Bayes: F1=0.3997 ± 0.0233
+   - k-NN: F1=0.2003 ± 0.0075 (needs feature scaling)
+
+### Baseline Model Results Summary
+
+| Model | Accuracy | F1 Score | Notes |
+|-------|----------|----------|-------|
+| Decision Tree | ~0.856 | 0.5952 | Best baseline, ready for tuning |
+| Random Forest | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Good stability, high tuning potential |
+| Naïve Bayes | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance |
+| k-NN | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler |
+
+**Key Findings**:
+- Tree-based models (DT, RF) significantly outperform k-NN and NB
+- k-NN performance is poor due to lack of feature scaling
+- Focus tuning efforts on Random Forest and Decision Tree
+- Current best F1=0.5952, need to reach ≥0.65 for full marks
 
 ### Next Steps (From Task_Checklist.md)
 
-1. **Baseline Models**: Train all 4 allowed models with default parameters
-2. **Hyperparameter Tuning**: GridSearchCV on best performing models
-3. **Ensemble Methods**: Optionally try Voting Classifier
-4. **Final Model**: Train on full dataset with fixed seed (42)
-5. **Code Conversion**: Convert all .ipynb to .py files
+1. **Performance Comparison Table**: Create unified comparison script
+2. **Hyperparameter Tuning**: GridSearchCV on Random Forest and Decision Tree
+3. **k-NN with Scaling**: Optional - test k-NN with StandardScaler
+4. **Ensemble Methods**: Optionally try Voting Classifier
+5. **Final Model**: Train on full dataset with fixed seed (42)
+6. **Code Conversion**: Convert all .ipynb to .py files
 
 ## Development Commands
 
