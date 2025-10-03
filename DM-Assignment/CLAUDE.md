@@ -126,6 +126,7 @@ python main.py
 ```
 
 **Dependencies** (to be added to requirements.txt):
+
 - pandas
 - numpy
 - scikit-learn

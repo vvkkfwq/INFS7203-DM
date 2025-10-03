@@ -58,13 +58,6 @@ def train_decision_tree_baseline():
     # Step 4: Cross-validation evaluation
     print(f"\n[4/4] Performing {CV_FOLDS}-fold cross-validation...")
 
-    # TODO(human): Implement cross-validation and evaluation logic
-    # This is a key learning opportunity to understand:
-    # 1. How StratifiedKFold maintains class distribution across folds
-    # 2. How cross_validate evaluates multiple metrics simultaneously
-    # 3. How to extract and summarize cross-validation scores
-
-    # Your task:
     # 1. Create a StratifiedKFold object with CV_FOLDS, shuffle=CV_SHUFFLE, random_state=RANDOM_SEED
     cv = StratifiedKFold(
         n_splits=CV_FOLDS, shuffle=CV_SHUFFLE, random_state=RANDOM_SEED
@@ -104,8 +97,6 @@ def train_decision_tree_baseline():
         "f1_std": f1_std,
         "cv_results": scores,
     }
-
-    # END TODO(human)
 
     # Display results
     print("\n" + "=" * 70)
