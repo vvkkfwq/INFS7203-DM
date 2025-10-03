@@ -40,19 +40,27 @@ INFS7203 Data Mining Track 1 - Binary Classification Project
 ```
 DM-Assignment/
 ├── data/
-│   ├── train.csv           # Training dataset
-│   └── test_data.csv       # Test dataset
-├── notebooks/              # Jupyter notebooks for exploration
-│   ├── data_exploration.ipynb
-│   └── 01_missing_analysis.ipynb
-├── src/                    # Source code (currently empty - to be developed)
-├── docs/                   # Documentation
+│   ├── train.csv                      # Training dataset
+│   └── test_data.csv                  # Test dataset
+├── notebooks/                         # Jupyter notebooks for exploration
+│   ├── 01_data_exploration.ipynb      # Initial data exploration
+│   ├── 02_missing_analysis.ipynb      # Missing value analysis
+│   └── 03_missing_value_experiments.ipynb  # Missing value imputation experiments
+├── src/                               # Source code modules
+│   ├── __init__.py                    # Package initialization
+│   ├── config.py                      # Configuration parameters (RANDOM_SEED=42)
+│   └── preprocessing.py               # Preprocessing pipeline (Global Median/Mode + OrdinalEncoder)
+├── test/                              # Test scripts
+│   └── test_preprocessing.py          # Preprocessing pipeline test
+├── results/                           # Model results and predictions
+├── docs/                              # Documentation
 │   ├── Project_Requirements.md
 │   └── Task_Checklist.md
-├── reports/                # Analysis reports
+├── reports/                           # Analysis reports
 │   ├── cardinality.md
-│   └── data_exploration_report.md
-└── README.md               # Project documentation (in Chinese)
+│   ├── data_exploration_report.md
+│   └── missing_value_experiments_results.csv  # Experimental results
+└── README.md                          # Project documentation (in Chinese)
 ```
 
 ## Key Data Characteristics
@@ -85,34 +93,44 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 - Target variable distribution
 - Feature distributions and relationships
 
+### Completed Work
+
+1. ✅ **Data Exploration**: Comprehensive EDA in notebooks
+2. ✅ **Preprocessing Experiments**: Tested 4 missing value strategies
+   - Best strategy: Global Median/Mode (F1=0.5952 with DecisionTree baseline)
+3. ✅ **Preprocessing Pipeline**: Implemented production-ready pipeline in `src/preprocessing.py`
+   - Missing value imputation: SimpleImputer (median for numerical, mode for categorical)
+   - Categorical encoding: OrdinalEncoder
+   - All tests passing
+
 ### Next Steps (From Task_Checklist.md)
 
-1. **Preprocessing Experiments**: Test 3-5 missing value strategies, 2-3 scaling methods, categorical encoding
-2. **Baseline Models**: Train all 4 allowed models with default parameters
-3. **Hyperparameter Tuning**: GridSearchCV on best performing models
-4. **Ensemble Methods**: Optionally try Voting Classifier
-5. **Final Model**: Train on full dataset with fixed seed (42)
-6. **Code Conversion**: Convert all .ipynb to .py files
+1. **Baseline Models**: Train all 4 allowed models with default parameters
+2. **Hyperparameter Tuning**: GridSearchCV on best performing models
+3. **Ensemble Methods**: Optionally try Voting Classifier
+4. **Final Model**: Train on full dataset with fixed seed (42)
+5. **Code Conversion**: Convert all .ipynb to .py files
 
 ## Development Commands
 
-**No Python code exists yet** - the project is in exploration phase.
-
-When code is developed:
+**Current environment**: Python 3.10 with conda environment `dm`
 
 ```bash
-# Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
+# Test preprocessing pipeline
+python test/test_preprocessing.py
 
-# Install dependencies (requirements.txt to be created)
-pip install -r requirements.txt
-
-# Run main pipeline (to be created)
+# Run main pipeline (to be implemented)
 python main.py
 
 # Expected output: s4860387.infs4203
 ```
+
+**Dependencies** (to be added to requirements.txt):
+- pandas
+- numpy
+- scikit-learn
+- matplotlib
+- seaborn
 
 ## Reproducibility Requirements
 
@@ -175,10 +193,10 @@ Example:
 - ✅ Missing value pattern identification
 - ✅ Feature distribution analysis
 - ✅ Project structure setup
+- ✅ Preprocessing pipeline implementation
 
 **To Do**:
 
-- Preprocessing pipeline implementation
 - Baseline model training
 - Hyperparameter tuning
 - Final model selection
