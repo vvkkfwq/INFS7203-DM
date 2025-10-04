@@ -1,0 +1,2 @@
+model,accuracy_mean,accuracy_std,f1_mean,f1_std,baseline_f1,baseline_accuracy,f1_improvement,accuracy_improvement,param_max_depth,param_max_features,param_min_samples_leaf,param_min_samples_split,param_n_estimators
+RandomForest_Tuned,0.836265349485361,0.005559045624198302,0.5995160271483713,0.016559770627597357,0.5742,0.8331,0.025316027148371223,0.0031653494853610686,10,,2,2,100

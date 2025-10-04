@@ -115,7 +115,4 @@ $RECYCLE.BIN/
 *.model
 *.h5
 *.pkl
-results/
-outputs/
-logs/
 DM-Assignment/notebooks/00_testbook.ipynb
