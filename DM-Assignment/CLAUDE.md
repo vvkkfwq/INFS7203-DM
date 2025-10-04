@@ -57,13 +57,16 @@ DM-Assignment/
 │   └── train_naive_bayes.py           # Naïve Bayes baseline training script
 ├── scripts/                           # Utility scripts
 │   ├── compare_baseline_models.py     # Unified baseline comparison script
-│   └── tune_random_forest.py          # Random Forest hyperparameter tuning script
+│   ├── tune_random_forest.py          # Random Forest hyperparameter tuning script
+│   └── tune_decision_tree.py          # Decision Tree hyperparameter tuning script
 ├── test/                              # Test scripts
 │   └── test_preprocessing.py          # Preprocessing pipeline test
 ├── results/                           # Model results and predictions
 │   ├── baseline_models_comparison.csv # Baseline comparison results
 │   ├── random_forest_tuning_results.csv # Random Forest tuning summary
-│   └── random_forest_tuning_results_detailed.csv # Random Forest detailed CV results
+│   ├── random_forest_tuning_results_detailed.csv # Random Forest detailed CV results
+│   ├── decision_tree_tuning_results.csv # Decision Tree tuning summary
+│   └── decision_tree_tuning_results_detailed.csv # Decision Tree detailed CV results
 ├── docs/                              # Documentation
 │   ├── Project_Requirements.md        # Assignment requirements
 │   └── Task_Checklist.md              # Task breakdown and progress
@@ -177,14 +180,61 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 
 **Gap to Target**: F1=0.65 - 0.5995 = **0.0505** (5.05% improvement still needed)
 
+#### Decision Tree (COMPLETED ✅)
+
+**Script**: `scripts/tune_decision_tree.py`
+
+**Search Space**:
+- `criterion`: ['gini', 'entropy']
+- `splitter`: ['best', 'random']
+- `max_depth`: [10, 15, 20, 25, None]
+- `min_samples_split`: [2, 5, 10, 20]
+- `min_samples_leaf`: [1, 2, 4, 8]
+- `max_features`: ['sqrt', 'log2', None]
+
+**Best Parameters**:
+- `criterion`: gini
+- `splitter`: best
+- `max_depth`: 10
+- `min_samples_split`: 20
+- `min_samples_leaf`: 4
+- `max_features`: None (uses all 43 features)
+
+**Performance**:
+- Baseline: F1=0.5344 ± 0.0185, Accuracy=0.7650 ± 0.0067
+- Tuned: F1=0.6039 ± 0.0140, Accuracy=0.8227 ± 0.0066
+- **Improvement**: +0.0695 F1 (+13.0%), +0.0577 Accuracy
+
+**Key Insights**:
+- Large `min_samples_split=20` prevents overfitting by requiring sufficient samples before splitting
+- `min_samples_leaf=4` balances bias-variance tradeoff better than smaller values
+- Similar to RF, `max_depth=10` and `max_features=None` are optimal for this dataset
+- Gini criterion outperforms entropy, and greedy splitter ('best') is superior to 'random'
+
+**Results Files**:
+- `results/decision_tree_tuning_results.csv`
+- `results/decision_tree_tuning_results_detailed.csv`
+
+**Gap to Target**: F1=0.65 - 0.6039 = **0.0461** (4.61% improvement still needed)
+
+**🏆 BEST MODEL**: Decision Tree (Tuned) outperforms all other models including Random Forest!
+
+### Model Performance Ranking (After Tuning)
+
+| Rank | Model | F1 Score | Accuracy | Gap to Target |
+|------|-------|----------|----------|---------------|
+| 🥇 1 | Decision Tree (Tuned) | 0.6039 ± 0.0140 | 0.8227 ± 0.0066 | -0.0461 |
+| 🥈 2 | Random Forest (Tuned) | 0.5995 ± 0.0166 | 0.8363 ± 0.0056 | -0.0505 |
+| 🥉 3 | Random Forest (Baseline) | 0.5742 ± 0.0226 | 0.8331 ± 0.0069 | -0.0758 |
+| 4 | Decision Tree (Baseline) | 0.5344 ± 0.0185 | 0.7650 ± 0.0067 | -0.1156 |
+
 ### Next Steps (From Task_Checklist.md)
 
 1. ✅ ~~**Performance Comparison Table**: Create unified comparison script~~ (COMPLETED)
 2. ✅ ~~**Random Forest Tuning**: GridSearchCV optimization~~ (COMPLETED - F1: 0.5742→0.5995)
-3. **Decision Tree Tuning**: GridSearchCV on Decision Tree (NEXT)
-   - Baseline F1=0.5344, target improvement to ~0.60+
-4. **Ensemble Methods**: Try Voting Classifier combinations (OPTIONAL)
-5. **Class Imbalance**: Experiment with `class_weight='balanced'` (OPTIONAL)
+3. ✅ ~~**Decision Tree Tuning**: GridSearchCV on Decision Tree~~ (COMPLETED - F1: 0.5344→0.6039, +13.0%)
+4. **Class Imbalance Handling**: Experiment with `class_weight='balanced'` on best model (NEXT - OPTIONAL)
+5. **Ensemble Methods**: Try Voting Classifier combinations (OPTIONAL)
 6. **Final Model Selection**: Choose best tuned model based on CV F1
 7. **Create main.py**: Unified entry point for final submission
 8. **Generate Submission Files**:
@@ -206,7 +256,8 @@ python scripts/compare_baseline_models.py
 
 # Hyperparameter tuning
 python scripts/tune_random_forest.py      # Completed ✅
-python scripts/tune_decision_tree.py      # Next step
+python scripts/tune_decision_tree.py      # Completed ✅
+python scripts/tune_knn.py                # Next step
 
 # Run main pipeline (to be implemented)
 python main.py
@@ -290,10 +341,11 @@ Example:
 **Completed (Phase 4 - Partial)**:
 
 - ✅ Random Forest hyperparameter tuning (F1: 0.5742→0.5995, +4.4%)
+- ✅ Decision Tree hyperparameter tuning (F1: 0.5344→0.6039, +13.0%) 🏆 BEST MODEL
 
 **In Progress (Phase 4)**:
 
-- 🔄 Decision Tree hyperparameter tuning (next priority)
+- 🔄 k-NN hyperparameter tuning (next priority)
 
 **To Do (Phase 5-6)**:
 

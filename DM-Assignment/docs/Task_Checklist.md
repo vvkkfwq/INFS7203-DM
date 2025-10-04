@@ -81,8 +81,20 @@
   - **最佳参数**: max_depth=10, n_estimators=100, min_samples_leaf=2, min_samples_split=2, max_features=None
   - **性能提升**: F1 Score: 0.5742 → 0.5995 (+0.0253, +4.4%)
   - **当前与目标差距**: 0.65 - 0.5995 = 0.0505 (还需提升5个百分点)
+- [x] 为 Decision Tree 定义参数搜索空间
+  - criterion: ['gini', 'entropy']
+  - splitter: ['best', 'random']
+  - max_depth: [10, 15, 20, 25, None]
+  - min_samples_split: [2, 5, 10, 20]
+  - min_samples_leaf: [1, 2, 4, 8]
+  - max_features: ['sqrt', 'log2', None]
+- [x] 运行 GridSearchCV
+- [x] 记录最佳参数和 F1 提升
+  - **最佳参数**: criterion='gini', splitter='best', max_depth=10, min_samples_split=20, min_samples_leaf=4, max_features=None
+  - **性能提升**: F1 Score: 0.5344 → 0.6039 (+0.0695, +13.0%) 🏆
+  - **当前与目标差距**: 0.65 - 0.6039 = 0.0461 (还需提升4.6个百分点)
 
-**输出**: Random Forest最佳参数 + 调优结果
+**输出**: Random Forest + Decision Tree 调优结果对比
 
 ---
 
@@ -94,10 +106,11 @@
   - n_neighbors: [3, 5, 7, 9, 11, 13, 15]
   - weights: ['uniform', 'distance']
   - metric: ['euclidean', 'manhattan']
+  - 需要添加 StandardScaler 预处理
 - [ ] 运行 GridSearchCV
-- [ ] 为 Decision Tree 调优 (如需要)
-- [ ] 比较所有调优后的模型
-- [ ] 选出 F1 最高的模型
+- [ ] 记录最佳参数和 F1 提升
+- [ ] 比较所有调优后的模型 (DT, RF, k-NN)
+- [ ] 选出 F1 最高的模型作为最终提交模型
 
 **输出**: 所有模型的最佳参数 + 性能排名
 
