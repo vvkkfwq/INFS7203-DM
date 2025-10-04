@@ -69,15 +69,20 @@
 
 ### Phase 4: 超参数调优 (开始)
 
-- [ ] 选出最有潜力的 2-3 个模型
-- [ ] 为 Random Forest 定义参数搜索空间
-  - n_estimators: [100, 200, 300, 400]
-  - max_depth: [10, 15, 20, 25, None]
-  - min_samples_split: [2, 5, 10, 15]
-- [ ] 运行 GridSearchCV
-- [ ] 记录最佳参数和 F1 提升
+- [x] 选出最有潜力的 2-3 个模型
+- [x] 为 Random Forest 定义参数搜索空间
+  - n_estimators: [100, 200, 300]
+  - max_depth: [10, 20, None]
+  - min_samples_split: [2, 5, 10]
+  - max_features: ["sqrt", "log2", None]
+  - min_samples_leaf: [1, 2, 4]
+- [x] 运行 GridSearchCV
+- [x] 记录最佳参数和 F1 提升
+  - **最佳参数**: max_depth=10, n_estimators=100, min_samples_leaf=2, min_samples_split=2, max_features=None
+  - **性能提升**: F1 Score: 0.5742 → 0.5995 (+0.0253, +4.4%)
+  - **当前与目标差距**: 0.65 - 0.5995 = 0.0505 (还需提升5个百分点)
 
-**输出**: 部分模型的最佳参数
+**输出**: Random Forest最佳参数 + 调优结果
 
 ---
 

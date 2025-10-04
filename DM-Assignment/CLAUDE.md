@@ -43,23 +43,35 @@ DM-Assignment/
 │   ├── train.csv                      # Training dataset
 │   └── test_data.csv                  # Test dataset
 ├── notebooks/                         # Jupyter notebooks for exploration
+│   ├── 00_testbook.ipynb              # Testing notebook
 │   ├── 01_data_exploration.ipynb      # Initial data exploration
-│   ├── 02_missing_analysis.ipynb      # Missing value analysis
+│   ├── 02_missing_value_detail.ipynb  # Detailed missing value analysis
 │   └── 03_missing_value_experiments.ipynb  # Missing value imputation experiments
 ├── src/                               # Source code modules
 │   ├── __init__.py                    # Package initialization
 │   ├── config.py                      # Configuration parameters (RANDOM_SEED=42)
-│   └── preprocessing.py               # Preprocessing pipeline (Global Median/Mode + OrdinalEncoder)
+│   ├── preprocessing.py               # Preprocessing pipeline (Global Median/Mode + OrdinalEncoder)
+│   ├── train_decision_tree.py         # Decision Tree baseline training script
+│   ├── train_random_forest.py         # Random Forest baseline training script
+│   ├── train_knn.py                   # k-NN baseline training script
+│   └── train_naive_bayes.py           # Naïve Bayes baseline training script
+├── scripts/                           # Utility scripts
+│   ├── compare_baseline_models.py     # Unified baseline comparison script
+│   └── tune_random_forest.py          # Random Forest hyperparameter tuning script
 ├── test/                              # Test scripts
 │   └── test_preprocessing.py          # Preprocessing pipeline test
 ├── results/                           # Model results and predictions
+│   ├── baseline_models_comparison.csv # Baseline comparison results
+│   ├── random_forest_tuning_results.csv # Random Forest tuning summary
+│   └── random_forest_tuning_results_detailed.csv # Random Forest detailed CV results
 ├── docs/                              # Documentation
-│   ├── Project_Requirements.md
-│   └── Task_Checklist.md
+│   ├── Project_Requirements.md        # Assignment requirements
+│   └── Task_Checklist.md              # Task breakdown and progress
 ├── reports/                           # Analysis reports
-│   ├── cardinality.md
-│   ├── data_exploration_report.md
+│   ├── cardinality.md                 # Feature cardinality analysis
+│   ├── data_exploration_report.md     # EDA report
 │   └── missing_value_experiments_results.csv  # Experimental results
+├── CLAUDE.md                          # Claude Code project context (this file)
 └── README.md                          # Project documentation (in Chinese)
 ```
 
@@ -113,12 +125,12 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 
 ### Baseline Model Results Summary
 
-| Model              | Accuracy        | F1 Score        | Notes                                 |
-| ------------------ | --------------- | --------------- | ------------------------------------- |
-| Random Forest      | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Best baseline, high tuning potential  |
-| Decision Tree      | 0.7650 ± 0.0067 | 0.5344 ± 0.0185 | Good baseline, ready for tuning       |
-| Naïve Bayes        | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance                  |
-| k-NN               | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler            |
+| Model         | Accuracy        | F1 Score        | Notes                                |
+| ------------- | --------------- | --------------- | ------------------------------------ |
+| Random Forest | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Best baseline, high tuning potential |
+| Decision Tree | 0.7650 ± 0.0067 | 0.5344 ± 0.0185 | Good baseline, ready for tuning      |
+| Naïve Bayes   | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance                 |
+| k-NN          | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler           |
 
 **Key Findings**:
 
@@ -128,20 +140,58 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 - **Gap to target**: Need 13.2% improvement to reach F1 ≥ 0.65 for full marks
 - **Priority**: Focus hyperparameter tuning on Random Forest and Decision Tree
 
+### Hyperparameter Tuning Results
+
+#### Random Forest (COMPLETED ✅)
+
+**Script**: `scripts/tune_random_forest.py`
+
+**Search Space**:
+- `n_estimators`: [100, 200, 300]
+- `max_depth`: [10, 20, None]
+- `min_samples_split`: [2, 5, 10]
+- `min_samples_leaf`: [1, 2, 4]
+- `max_features`: ['sqrt', 'log2', None]
+
+**Best Parameters**:
+- `n_estimators`: 100
+- `max_depth`: 10
+- `min_samples_split`: 2
+- `min_samples_leaf`: 2
+- `max_features`: None (uses all 43 features)
+
+**Performance**:
+- Baseline: F1=0.5742 ± 0.0226, Accuracy=0.8331 ± 0.0069
+- Tuned: F1=0.5995 ± 0.0166, Accuracy=0.8363 ± 0.0056
+- **Improvement**: +0.0253 F1 (+4.4%), +0.0032 Accuracy
+
+**Key Insights**:
+- Using all features (`max_features=None`) outperforms feature subsampling ('sqrt' or 'log2')
+- Moderate tree depth (`max_depth=10`) prevents overfitting while maintaining performance
+- Lower tree count (`n_estimators=100`) is sufficient, more trees don't improve F1
+- Minimal leaf size (`min_samples_leaf=2`) balances bias-variance tradeoff
+
+**Results Files**:
+- `results/random_forest_tuning_results.csv`
+- `results/random_forest_tuning_results_detailed.csv`
+
+**Gap to Target**: F1=0.65 - 0.5995 = **0.0505** (5.05% improvement still needed)
+
 ### Next Steps (From Task_Checklist.md)
 
 1. ✅ ~~**Performance Comparison Table**: Create unified comparison script~~ (COMPLETED)
-2. **Hyperparameter Tuning**: GridSearchCV on Random Forest and Decision Tree (IN PROGRESS)
-   - Priority 1: Random Forest (best baseline F1=0.5742)
-   - Priority 2: Decision Tree (second best F1=0.5344)
-   - Optional: k-NN with StandardScaler
-3. **Final Model Selection**: Choose best tuned model
-4. **Create main.py**: Unified entry point for final submission
-5. **Generate Submission Files**:
-   - Train final model on full dataset
+2. ✅ ~~**Random Forest Tuning**: GridSearchCV optimization~~ (COMPLETED - F1: 0.5742→0.5995)
+3. **Decision Tree Tuning**: GridSearchCV on Decision Tree (NEXT)
+   - Baseline F1=0.5344, target improvement to ~0.60+
+4. **Ensemble Methods**: Try Voting Classifier combinations (OPTIONAL)
+5. **Class Imbalance**: Experiment with `class_weight='balanced'` (OPTIONAL)
+6. **Final Model Selection**: Choose best tuned model based on CV F1
+7. **Create main.py**: Unified entry point for final submission
+8. **Generate Submission Files**:
+   - Train final model on full training dataset
    - Generate predictions on test set
    - Create `s4860387.infs4203` result file
-6. **Code Packaging**: Package all code for submission
+9. **Code Packaging**: Package all code for submission
 
 ## Development Commands
 
@@ -154,9 +204,9 @@ python test/test_preprocessing.py
 # Compare baseline models (completed)
 python scripts/compare_baseline_models.py
 
-# Hyperparameter tuning (next steps)
-python scripts/tune_random_forest.py      # To be created
-python scripts/tune_decision_tree.py      # To be created
+# Hyperparameter tuning
+python scripts/tune_random_forest.py      # Completed ✅
+python scripts/tune_decision_tree.py      # Next step
 
 # Run main pipeline (to be implemented)
 python main.py
@@ -237,10 +287,13 @@ Example:
 - ✅ Baseline models training (all 4 models)
 - ✅ Performance comparison table generation
 
+**Completed (Phase 4 - Partial)**:
+
+- ✅ Random Forest hyperparameter tuning (F1: 0.5742→0.5995, +4.4%)
+
 **In Progress (Phase 4)**:
 
-- 🔄 Hyperparameter tuning for Random Forest
-- 🔄 Hyperparameter tuning for Decision Tree
+- 🔄 Decision Tree hyperparameter tuning (next priority)
 
 **To Do (Phase 5-6)**:
 
