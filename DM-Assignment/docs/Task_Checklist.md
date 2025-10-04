@@ -102,15 +102,19 @@
 
 ### Phase 4: 超参数调优 (继续)
 
-- [ ] 为 k-NN 定义参数搜索空间
+- [x] 为 k-NN 定义参数搜索空间
   - n_neighbors: [3, 5, 7, 9, 11, 13, 15]
   - weights: ['uniform', 'distance']
   - metric: ['euclidean', 'manhattan']
   - 需要添加 StandardScaler 预处理
-- [ ] 运行 GridSearchCV
-- [ ] 记录最佳参数和 F1 提升
-- [ ] 比较所有调优后的模型 (DT, RF, k-NN)
+- [x] 运行 GridSearchCV
+- [x] 记录最佳参数和 F1 提升
+  - **最佳参数**: metric='manhattan', n_neighbors=3, weights='uniform'
+  - **性能提升**: F1 Score: 0.2003 → 0.4320 (+0.2317, +115.7%) 🎉 StandardScaler效果显著
+  - **当前与目标差距**: 0.65 - 0.4320 = 0.2180 (远不如树模型,不适合作为最终模型)
+- [x] 比较所有调优后的模型 (DT, RF, k-NN)
 - [ ] 选出 F1 最高的模型作为最终提交模型
+  - **当前最佳**: Decision Tree (Tuned) - F1=0.6039
 
 **输出**: 所有模型的最佳参数 + 性能排名
 

@@ -58,7 +58,8 @@ DM-Assignment/
 ├── scripts/                           # Utility scripts
 │   ├── compare_baseline_models.py     # Unified baseline comparison script
 │   ├── tune_random_forest.py          # Random Forest hyperparameter tuning script
-│   └── tune_decision_tree.py          # Decision Tree hyperparameter tuning script
+│   ├── tune_decision_tree.py          # Decision Tree hyperparameter tuning script
+│   └── tune_knn.py                    # k-NN hyperparameter tuning script (with StandardScaler)
 ├── test/                              # Test scripts
 │   └── test_preprocessing.py          # Preprocessing pipeline test
 ├── results/                           # Model results and predictions
@@ -66,7 +67,9 @@ DM-Assignment/
 │   ├── random_forest_tuning_results.csv # Random Forest tuning summary
 │   ├── random_forest_tuning_results_detailed.csv # Random Forest detailed CV results
 │   ├── decision_tree_tuning_results.csv # Decision Tree tuning summary
-│   └── decision_tree_tuning_results_detailed.csv # Decision Tree detailed CV results
+│   ├── decision_tree_tuning_results_detailed.csv # Decision Tree detailed CV results
+│   ├── knn_tuning_results.csv         # k-NN tuning summary
+│   └── knn_tuning_results_detailed.csv # k-NN detailed CV results
 ├── docs/                              # Documentation
 │   ├── Project_Requirements.md        # Assignment requirements
 │   └── Task_Checklist.md              # Task breakdown and progress
@@ -219,6 +222,40 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 
 **🏆 BEST MODEL**: Decision Tree (Tuned) outperforms all other models including Random Forest!
 
+#### k-NN (COMPLETED ✅)
+
+**Script**: `scripts/tune_knn.py`
+
+**CRITICAL**: k-NN requires StandardScaler for feature scaling (distance-based algorithm)
+
+**Search Space**:
+- `n_neighbors`: [3, 5, 7, 9, 11, 13, 15]
+- `weights`: ['uniform', 'distance']
+- `metric`: ['euclidean', 'manhattan']
+
+**Best Parameters**:
+- `n_neighbors`: 3
+- `weights`: uniform
+- `metric`: manhattan
+
+**Performance**:
+- Baseline (without scaling): F1=0.2003 ± 0.0075, Accuracy=0.7159 ± 0.0068
+- Tuned (with StandardScaler): F1=0.4320 ± 0.0115, Accuracy=0.7391 ± 0.0060
+- **Improvement**: +0.2317 F1 (+115.7%), +0.0232 Accuracy
+
+**Key Insights**:
+- StandardScaler is critical: F1 jumped from 0.2003 to 0.4320 (+115.7%)
+- Manhattan distance (L1) outperforms Euclidean (L2) for this dataset
+- Small k=3 works best, indicating local decision boundaries
+- Distance weighting has no effect (uniform and distance tied for rank 1)
+- Still significantly underperforms tree models due to curse of dimensionality (43 features)
+
+**Results Files**:
+- `results/knn_tuning_results.csv`
+- `results/knn_tuning_results_detailed.csv`
+
+**Gap to Target**: F1=0.65 - 0.4320 = **0.2180** (not competitive for final submission)
+
 ### Model Performance Ranking (After Tuning)
 
 | Rank | Model | F1 Score | Accuracy | Gap to Target |
@@ -227,21 +264,25 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 | 🥈 2 | Random Forest (Tuned) | 0.5995 ± 0.0166 | 0.8363 ± 0.0056 | -0.0505 |
 | 🥉 3 | Random Forest (Baseline) | 0.5742 ± 0.0226 | 0.8331 ± 0.0069 | -0.0758 |
 | 4 | Decision Tree (Baseline) | 0.5344 ± 0.0185 | 0.7650 ± 0.0067 | -0.1156 |
+| 5 | k-NN (Tuned with scaling) | 0.4320 ± 0.0115 | 0.7391 ± 0.0060 | -0.2180 |
+| 6 | Naïve Bayes (Baseline) | 0.3997 ± 0.0233 | 0.7915 ± 0.0038 | -0.2503 |
+| 7 | k-NN (Baseline, no scaling) | 0.2003 ± 0.0075 | 0.7159 ± 0.0068 | -0.4497 |
 
 ### Next Steps (From Task_Checklist.md)
 
 1. ✅ ~~**Performance Comparison Table**: Create unified comparison script~~ (COMPLETED)
 2. ✅ ~~**Random Forest Tuning**: GridSearchCV optimization~~ (COMPLETED - F1: 0.5742→0.5995)
 3. ✅ ~~**Decision Tree Tuning**: GridSearchCV on Decision Tree~~ (COMPLETED - F1: 0.5344→0.6039, +13.0%)
-4. **Class Imbalance Handling**: Experiment with `class_weight='balanced'` on best model (NEXT - OPTIONAL)
-5. **Ensemble Methods**: Try Voting Classifier combinations (OPTIONAL)
-6. **Final Model Selection**: Choose best tuned model based on CV F1
-7. **Create main.py**: Unified entry point for final submission
-8. **Generate Submission Files**:
+4. ✅ ~~**k-NN Tuning**: GridSearchCV with StandardScaler~~ (COMPLETED - F1: 0.2003→0.4320, +115.7%)
+5. **Class Imbalance Handling**: Experiment with `class_weight='balanced'` on Decision Tree (NEXT - OPTIONAL)
+6. **Ensemble Methods**: Try Voting Classifier combinations (OPTIONAL)
+7. **Final Model Selection**: Choose best tuned model based on CV F1
+8. **Create main.py**: Unified entry point for final submission
+9. **Generate Submission Files**:
    - Train final model on full training dataset
    - Generate predictions on test set
    - Create `s4860387.infs4203` result file
-9. **Code Packaging**: Package all code for submission
+10. **Code Packaging**: Package all code for submission
 
 ## Development Commands
 
@@ -257,7 +298,7 @@ python scripts/compare_baseline_models.py
 # Hyperparameter tuning
 python scripts/tune_random_forest.py      # Completed ✅
 python scripts/tune_decision_tree.py      # Completed ✅
-python scripts/tune_knn.py                # Next step
+python scripts/tune_knn.py                # Completed ✅
 
 # Run main pipeline (to be implemented)
 python main.py
@@ -338,14 +379,11 @@ Example:
 - ✅ Baseline models training (all 4 models)
 - ✅ Performance comparison table generation
 
-**Completed (Phase 4 - Partial)**:
+**Completed (Phase 4)**:
 
 - ✅ Random Forest hyperparameter tuning (F1: 0.5742→0.5995, +4.4%)
 - ✅ Decision Tree hyperparameter tuning (F1: 0.5344→0.6039, +13.0%) 🏆 BEST MODEL
-
-**In Progress (Phase 4)**:
-
-- 🔄 k-NN hyperparameter tuning (next priority)
+- ✅ k-NN hyperparameter tuning (F1: 0.2003→0.4320, +115.7%, with StandardScaler)
 
 **To Do (Phase 5-6)**:
 
