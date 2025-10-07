@@ -86,7 +86,7 @@ def tune_decision_tree():
         scoring=PRIMARY_METRIC,
         cv=cv,
         n_jobs=-1,
-        verbose=2,
+        verbose=1,
         return_train_score=False,
     )
 

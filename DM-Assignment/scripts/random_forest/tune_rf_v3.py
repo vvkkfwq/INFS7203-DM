@@ -1,8 +1,11 @@
 """
-Random Forest hyperparameter tuning script.
+Random Forest hyperparameter tuning script (v3).
 
-This script performs GridSearchCV to find optimal hyperparameters for Random Forest
-to maximize F1 Score on the binary classification task.
+Experiment Goal: Refine hyperparameter search space based on v1 results
+
+Changes from v2:
+- class_weight set to "balanced_subsample" for better handling of class imbalance
+
 """
 
 import pandas as pd
@@ -11,7 +14,7 @@ import sys
 from pathlib import Path
 
 # Add src directory to path
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
@@ -55,11 +58,11 @@ def tune_random_forest():
     print("\n[3/5] Defining parameter grid...")
     # Define parameter search space
     param_grid = {
-        "n_estimators": [100, 200, 300],
-        "max_depth": [10, 20, None],
-        "min_samples_split": [2, 5, 10],
-        "min_samples_leaf": [1, 2, 4],
-        "max_features": ["sqrt", "log2", None],
+        "n_estimators": [50, 80, 100],
+        "max_depth": [5, 8, 10],
+        "min_samples_split": [2, 3, 4],
+        "min_samples_leaf": [1, 2, 3],
+        "max_features": [None],
     }
 
     print(f"  ✓ Parameter grid defined:")
@@ -76,7 +79,9 @@ def tune_random_forest():
     )
 
     # Initialize base model
-    base_model = RandomForestClassifier(random_state=RANDOM_SEED)
+    base_model = RandomForestClassifier(
+        class_weight="balanced", random_state=RANDOM_SEED
+    )
 
     # Create GridSearchCV object
     grid_search = GridSearchCV(
@@ -85,7 +90,7 @@ def tune_random_forest():
         scoring=PRIMARY_METRIC,
         cv=cv,
         n_jobs=-1,
-        verbose=2,
+        verbose=1,
         return_train_score=False,
     )
 
@@ -160,7 +165,7 @@ def tune_random_forest():
     return results
 
 
-def save_results(results, output_file="results/random_forest_tuning_results.csv"):
+def save_results(results, output_file="results/rf_tuning_v3_results.csv"):
     """
     Save tuning results to CSV file.
 
@@ -201,12 +206,6 @@ def main():
         save_results(results)
 
         print("\n✓ Random Forest hyperparameter tuning complete!")
-        print(f"\nNext steps:")
-        print(f"  1. Review the best parameters above")
-        print(
-            f"  2. Compare with Decision Tree tuning (after running tune_decision_tree.py)"
-        )
-        print(f"  3. Select the best model for final submission")
 
     except Exception as e:
         print(f"\n✗ Error during tuning: {e}", file=sys.stderr)

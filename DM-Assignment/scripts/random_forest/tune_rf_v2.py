@@ -1,10 +1,16 @@
 """
-k-NN hyperparameter tuning script.
+Random Forest hyperparameter tuning script (v2).
 
-This script performs GridSearchCV to find optimal hyperparameters for k-NN
+Experiment Goal: Refine hyperparameter search space based on v1 results
+
+Changes from v1:
+- Adjusted max_depth range to [5, 8, 10] based on v1 results
+- Adjusted min_samples_split to [2, 3, 4]
+- Adjusted min_samples_leaf to [1, 2, 3]
+- Removed max_features options to only use None
+
+This script performs GridSearchCV to find optimal hyperparameters for Random Forest
 to maximize F1 Score on the binary classification task.
-
-IMPORTANT: k-NN requires feature scaling (StandardScaler) for optimal performance.
 """
 
 import pandas as pd
@@ -13,10 +19,9 @@ import sys
 from pathlib import Path
 
 # Add src directory to path
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from src.config import (
     RANDOM_SEED,
@@ -28,28 +33,25 @@ from src.config import (
 from src.preprocessing import DataPreprocessor, load_data
 
 
-def tune_knn():
+def tune_random_forest():
     """
-    Perform hyperparameter tuning for k-NN using GridSearchCV.
-
-    NOTE: k-NN requires feature scaling. This function applies StandardScaler
-    after categorical encoding for optimal distance-based computation.
+    Perform hyperparameter tuning for Random Forest using GridSearchCV.
 
     Returns:
         dict: Tuning results including best model, best parameters, and scores
     """
     print("\n" + "=" * 70)
-    print("k-NN HYPERPARAMETER TUNING")
+    print("RANDOM FOREST HYPERPARAMETER TUNING")
     print("=" * 70)
 
     # Step 1: Load data
-    print("\n[1/6] Loading training data...")
+    print("\n[1/5] Loading training data...")
     X_train, y_train = load_data(TRAIN_FILE)
     print(f"  ✓ Loaded {X_train.shape[0]} samples with {X_train.shape[1]} features")
     print(f"  ✓ Class distribution: {dict(y_train.value_counts())}")
 
-    # Step 2: Preprocess data (imputation + encoding)
-    print("\n[2/6] Preprocessing data...")
+    # Step 2: Preprocess data
+    print("\n[2/5] Preprocessing data...")
     preprocessor = DataPreprocessor()
     X_train_processed = preprocessor.fit_transform(X_train)
     print(f"  ✓ Preprocessing complete")
@@ -57,24 +59,15 @@ def tune_knn():
         f"  ✓ Missing values after preprocessing: {X_train_processed.isnull().sum().sum()}"
     )
 
-    # Step 3: Apply StandardScaler (CRITICAL for k-NN)
-    print("\n[3/6] Applying StandardScaler...")
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train_processed)
-
-    # Print scaling statistics
-    print(f"  ✓ StandardScaler fitted")
-    print(f"  ✓ Scaled data shape: {X_train_scaled.shape}")
-    print(f"  ✓ Mean after scaling: {X_train_scaled.mean():.6f} (should be ~0)")
-    print(f"  ✓ Std after scaling: {X_train_scaled.std():.6f} (should be ~1)")
-
-    # Step 4: Define parameter grid
-    print("\n[4/6] Defining parameter grid...")
-    # Define parameter search space for k-NN
+    # Step 3: Define parameter grid
+    print("\n[3/5] Defining parameter grid...")
+    # Define parameter search space
     param_grid = {
-        "n_neighbors": [3, 5, 7, 9, 11, 13, 15],
-        "weights": ["uniform", "distance"],
-        "metric": ["euclidean", "manhattan"],
+        "n_estimators": [50, 80, 100],
+        "max_depth": [5, 8, 10],
+        "min_samples_split": [2, 3, 4],
+        "min_samples_leaf": [1, 2, 3],
+        "max_features": [None],
     }
 
     print(f"  ✓ Parameter grid defined:")
@@ -82,8 +75,8 @@ def tune_knn():
         print(f"      - {param}: {values}")
     print(f"  ✓ Total combinations: {np.prod([len(v) for v in param_grid.values()])}")
 
-    # Step 5: Initialize GridSearchCV
-    print("\n[5/6] Setting up GridSearchCV...")
+    # Step 4: Initialize GridSearchCV
+    print("\n[4/5] Setting up GridSearchCV...")
 
     # Create StratifiedKFold for cross-validation
     cv = StratifiedKFold(
@@ -91,7 +84,7 @@ def tune_knn():
     )
 
     # Initialize base model
-    base_model = KNeighborsClassifier()
+    base_model = RandomForestClassifier(random_state=RANDOM_SEED)
 
     # Create GridSearchCV object
     grid_search = GridSearchCV(
@@ -109,12 +102,12 @@ def tune_knn():
     print(f"  ✓ Cross-validation: {CV_FOLDS}-fold StratifiedKFold")
     print(f"  ✓ Parallel jobs: -1 (all CPUs)")
 
-    # Step 6: Run grid search
-    print("\n[6/6] Running grid search...")
-    print("  (This may take 2-5 minutes depending on your hardware...)")
+    # Step 5: Run grid search
+    print("\n[5/5] Running grid search...")
+    print("  (This may take 10-30 minutes depending on your hardware...)")
     print("  Progress will be shown below:\n")
 
-    grid_search.fit(X_train_scaled, y_train)
+    grid_search.fit(X_train_processed, y_train)
 
     # Extract results
     print("\n" + "=" * 70)
@@ -137,7 +130,7 @@ def tune_knn():
     print(f"  F1 Score: {f1_mean:.4f} ± {f1_std:.4f}")
 
     # Compare with baseline
-    baseline_f1 = 0.2003  # From baseline results (WITHOUT StandardScaler)
+    baseline_f1 = 0.5742  # From baseline results
 
     print(f"\nImprovement over Baseline:")
     print(
@@ -160,7 +153,7 @@ def tune_knn():
 
     # Prepare return results
     results = {
-        "model_name": "k-NN_Tuned",
+        "model_name": "RandomForest_Tuned",
         "best_model": best_model,
         "best_params": grid_search.best_params_,
         "best_f1_score": f1_mean,
@@ -168,7 +161,6 @@ def tune_knn():
         "baseline_f1": baseline_f1,
         "f1_improvement": f1_mean - baseline_f1,
         "preprocessor": preprocessor,
-        "scaler": scaler,  # IMPORTANT: Save scaler for test set
         "grid_search": grid_search,
         "cv_results": results_df,
     }
@@ -176,7 +168,7 @@ def tune_knn():
     return results
 
 
-def save_results(results, output_file="results/knn_tuning_results.csv"):
+def save_results(results, output_file="results/rf_tuning_v2_results.csv"):
     """
     Save tuning results to CSV file.
 
@@ -211,18 +203,12 @@ def save_results(results, output_file="results/knn_tuning_results.csv"):
 def main():
     """Main execution function."""
     try:
-        results = tune_knn()
+        results = tune_random_forest()
 
         # Save results
         save_results(results)
 
-        print("\n✓ k-NN hyperparameter tuning complete!")
-        print(f"\nNext steps:")
-        print(f"  1. Review the best parameters above")
-        print(
-            f"  2. Compare with Decision Tree (F1=0.6039) and Random Forest (F1=0.5995)"
-        )
-        print(f"  3. Select the best model for final submission")
+        print("\n✓ Random Forest hyperparameter tuning complete!")
 
     except Exception as e:
         print(f"\n✗ Error during tuning: {e}", file=sys.stderr)
