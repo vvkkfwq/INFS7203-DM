@@ -1,2 +1,2 @@
-model,accuracy_mean,accuracy_std,f1_mean,f1_std,baseline_f1,baseline_accuracy,f1_improvement,accuracy_improvement,param_criterion,param_max_depth,param_max_features,param_min_samples_leaf,param_min_samples_split,param_splitter
-DecisionTree_Tuned,0.8227211652554516,0.006633246912669011,0.6038521515026837,0.01401929041238416,0.5344,0.765,0.06945215150268369,0.05772116525545157,gini,10,,4,20,best
+model             , f1_mean           , f1_std             , baseline_f1, f1_improvement     , param_criterion, param_max_depth, param_max_features, param_min_samples_leaf, param_min_samples_split, param_splitter
+DecisionTree_Tuned, 0.6038521515026837, 0.01401929041238416,      0.5344, 0.06945215150268369, gini           ,              10,                   ,                      4,                      20, best

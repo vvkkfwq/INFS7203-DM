@@ -1,0 +1,2 @@
+model,f1_mean,f1_std,baseline_f1,f1_improvement,param_criterion,param_max_depth,param_max_features,param_min_samples_leaf,param_min_samples_split,param_splitter
+DecisionTree_Tuned,0.6091774367768273,0.01430867922733584,0.5344,0.07477743677682736,gini,10,,4,40,best

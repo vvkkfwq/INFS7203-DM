@@ -1,2 +1,0 @@
-model,accuracy_mean,accuracy_std,f1_mean,f1_std,baseline_f1,baseline_accuracy,f1_improvement,accuracy_improvement,param_metric,param_n_neighbors,param_weights
-k-NN_Tuned,0.7390576238519063,0.0059698055609418155,0.4319832082730827,0.011546529802598458,0.2003,0.7159,0.23168320827308267,0.02315762385190634,manhattan,3,uniform

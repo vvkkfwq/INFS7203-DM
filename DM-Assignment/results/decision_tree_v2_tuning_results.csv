@@ -1,0 +1,2 @@
+model                      , f1_mean           , f1_std              , baseline_f1, f1_improvement    , param_criterion, param_max_depth, param_max_features, param_min_samples_leaf, param_min_samples_split, param_splitter
+DecisionTree_Balanced_Tuned, 0.6067738222850977, 0.015431138973581582,      0.5344, 0.0723738222850977, entropy        ,              10,                   ,                      1,                      10, random
