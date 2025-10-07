@@ -21,7 +21,6 @@ from src.config import (
     CV_FOLDS,
     CV_SHUFFLE,
     PRIMARY_METRIC,
-    SECONDARY_METRIC,
 )
 from src.preprocessing import DataPreprocessor, load_data
 
@@ -115,38 +114,19 @@ def tune_random_forest():
 
     # Evaluate best model on all metrics
     best_model = grid_search.best_estimator_
-
-    # Get accuracy score using cross_validate
-    from sklearn.model_selection import cross_validate
-
-    scores = cross_validate(
-        best_model,
-        X_train_processed,
-        y_train,
-        cv=cv,
-        scoring=[PRIMARY_METRIC, SECONDARY_METRIC],
-        return_train_score=False,
-    )
-
-    accuracy_mean = np.mean(scores["test_accuracy"])
-    accuracy_std = np.std(scores["test_accuracy"])
-    f1_mean = np.mean(scores["test_f1"])
-    f1_std = np.std(scores["test_f1"])
+    best_idx = grid_search.best_index_
+    f1_mean = grid_search.cv_results_["mean_test_score"][best_idx]
+    f1_std = grid_search.cv_results_["std_test_score"][best_idx]
 
     print(f"\nBest Model Performance:")
-    print(f"  Accuracy: {accuracy_mean:.4f} ± {accuracy_std:.4f}")
     print(f"  F1 Score: {f1_mean:.4f} ± {f1_std:.4f}")
 
     # Compare with baseline
     baseline_f1 = 0.5742  # From baseline results
-    baseline_accuracy = 0.8331
 
     print(f"\nImprovement over Baseline:")
     print(
         f"  F1 Score: {baseline_f1:.4f} → {f1_mean:.4f} ({f1_mean - baseline_f1:+.4f})"
-    )
-    print(
-        f"  Accuracy: {baseline_accuracy:.4f} → {accuracy_mean:.4f} ({accuracy_mean - baseline_accuracy:+.4f})"
     )
 
     # Show top 5 parameter combinations
@@ -169,13 +149,9 @@ def tune_random_forest():
         "best_model": best_model,
         "best_params": grid_search.best_params_,
         "best_f1_score": f1_mean,
-        "best_accuracy": accuracy_mean,
         "f1_std": f1_std,
-        "accuracy_std": accuracy_std,
         "baseline_f1": baseline_f1,
-        "baseline_accuracy": baseline_accuracy,
         "f1_improvement": f1_mean - baseline_f1,
-        "accuracy_improvement": accuracy_mean - baseline_accuracy,
         "preprocessor": preprocessor,
         "grid_search": grid_search,
         "cv_results": results_df,
@@ -199,14 +175,10 @@ def save_results(results, output_file="results/random_forest_tuning_results.csv"
     # Save summary results
     summary = {
         "model": results["model_name"],
-        "accuracy_mean": results["best_accuracy"],
-        "accuracy_std": results["accuracy_std"],
         "f1_mean": results["best_f1_score"],
         "f1_std": results["f1_std"],
         "baseline_f1": results["baseline_f1"],
-        "baseline_accuracy": results["baseline_accuracy"],
         "f1_improvement": results["f1_improvement"],
-        "accuracy_improvement": results["accuracy_improvement"],
         **{f"param_{k}": v for k, v in results["best_params"].items()},
     }
 
