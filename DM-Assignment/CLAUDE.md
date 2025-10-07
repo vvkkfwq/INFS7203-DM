@@ -24,6 +24,11 @@ INFS7203 Data Mining Track 1 - Binary Classification Project
 
 **ALLOWED** (Week 2-8 techniques only):
 
+- Outlier detection
+- Normalization
+- Imputation
+- Handling categorical features
+- Ensembles
 - Decision Tree
 - Random Forest
 - k-Nearest Neighbour (k-NN)
@@ -146,143 +151,18 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 - **Gap to target**: Need 13.2% improvement to reach F1 ≥ 0.65 for full marks
 - **Priority**: Focus hyperparameter tuning on Random Forest and Decision Tree
 
-### Hyperparameter Tuning Results
-
-#### Random Forest (COMPLETED ✅)
-
-**Script**: `scripts/tune_random_forest.py`
-
-**Search Space**:
-- `n_estimators`: [100, 200, 300]
-- `max_depth`: [10, 20, None]
-- `min_samples_split`: [2, 5, 10]
-- `min_samples_leaf`: [1, 2, 4]
-- `max_features`: ['sqrt', 'log2', None]
-
-**Best Parameters**:
-- `n_estimators`: 100
-- `max_depth`: 10
-- `min_samples_split`: 2
-- `min_samples_leaf`: 2
-- `max_features`: None (uses all 43 features)
-
-**Performance**:
-- Baseline: F1=0.5742 ± 0.0226, Accuracy=0.8331 ± 0.0069
-- Tuned: F1=0.5995 ± 0.0166, Accuracy=0.8363 ± 0.0056
-- **Improvement**: +0.0253 F1 (+4.4%), +0.0032 Accuracy
-
-**Key Insights**:
-- Using all features (`max_features=None`) outperforms feature subsampling ('sqrt' or 'log2')
-- Moderate tree depth (`max_depth=10`) prevents overfitting while maintaining performance
-- Lower tree count (`n_estimators=100`) is sufficient, more trees don't improve F1
-- Minimal leaf size (`min_samples_leaf=2`) balances bias-variance tradeoff
-
-**Results Files**:
-- `results/random_forest_tuning_results.csv`
-- `results/random_forest_tuning_results_detailed.csv`
-
-**Gap to Target**: F1=0.65 - 0.5995 = **0.0505** (5.05% improvement still needed)
-
-#### Decision Tree (COMPLETED ✅)
-
-**Script**: `scripts/tune_decision_tree.py`
-
-**Search Space**:
-- `criterion`: ['gini', 'entropy']
-- `splitter`: ['best', 'random']
-- `max_depth`: [10, 15, 20, 25, None]
-- `min_samples_split`: [2, 5, 10, 20]
-- `min_samples_leaf`: [1, 2, 4, 8]
-- `max_features`: ['sqrt', 'log2', None]
-
-**Best Parameters**:
-- `criterion`: gini
-- `splitter`: best
-- `max_depth`: 10
-- `min_samples_split`: 20
-- `min_samples_leaf`: 4
-- `max_features`: None (uses all 43 features)
-
-**Performance**:
-- Baseline: F1=0.5344 ± 0.0185, Accuracy=0.7650 ± 0.0067
-- Tuned: F1=0.6039 ± 0.0140, Accuracy=0.8227 ± 0.0066
-- **Improvement**: +0.0695 F1 (+13.0%), +0.0577 Accuracy
-
-**Key Insights**:
-- Large `min_samples_split=20` prevents overfitting by requiring sufficient samples before splitting
-- `min_samples_leaf=4` balances bias-variance tradeoff better than smaller values
-- Similar to RF, `max_depth=10` and `max_features=None` are optimal for this dataset
-- Gini criterion outperforms entropy, and greedy splitter ('best') is superior to 'random'
-
-**Results Files**:
-- `results/decision_tree_tuning_results.csv`
-- `results/decision_tree_tuning_results_detailed.csv`
-
-**Gap to Target**: F1=0.65 - 0.6039 = **0.0461** (4.61% improvement still needed)
-
-**🏆 BEST MODEL**: Decision Tree (Tuned) outperforms all other models including Random Forest!
-
-#### k-NN (COMPLETED ✅)
-
-**Script**: `scripts/tune_knn.py`
-
-**CRITICAL**: k-NN requires StandardScaler for feature scaling (distance-based algorithm)
-
-**Search Space**:
-- `n_neighbors`: [3, 5, 7, 9, 11, 13, 15]
-- `weights`: ['uniform', 'distance']
-- `metric`: ['euclidean', 'manhattan']
-
-**Best Parameters**:
-- `n_neighbors`: 3
-- `weights`: uniform
-- `metric`: manhattan
-
-**Performance**:
-- Baseline (without scaling): F1=0.2003 ± 0.0075, Accuracy=0.7159 ± 0.0068
-- Tuned (with StandardScaler): F1=0.4320 ± 0.0115, Accuracy=0.7391 ± 0.0060
-- **Improvement**: +0.2317 F1 (+115.7%), +0.0232 Accuracy
-
-**Key Insights**:
-- StandardScaler is critical: F1 jumped from 0.2003 to 0.4320 (+115.7%)
-- Manhattan distance (L1) outperforms Euclidean (L2) for this dataset
-- Small k=3 works best, indicating local decision boundaries
-- Distance weighting has no effect (uniform and distance tied for rank 1)
-- Still significantly underperforms tree models due to curse of dimensionality (43 features)
-
-**Results Files**:
-- `results/knn_tuning_results.csv`
-- `results/knn_tuning_results_detailed.csv`
-
-**Gap to Target**: F1=0.65 - 0.4320 = **0.2180** (not competitive for final submission)
-
 ### Model Performance Ranking (After Tuning)
 
-| Rank | Model | F1 Score | Accuracy | Gap to Target |
-|------|-------|----------|----------|---------------|
-| 🥇 1 | Decision Tree (Tuned) | 0.6039 ± 0.0140 | 0.8227 ± 0.0066 | -0.0461 |
-| 🥈 2 | Random Forest (Tuned) | 0.5995 ± 0.0166 | 0.8363 ± 0.0056 | -0.0505 |
-| 🥉 3 | Random Forest (Baseline) | 0.5742 ± 0.0226 | 0.8331 ± 0.0069 | -0.0758 |
-| 4 | Decision Tree (Baseline) | 0.5344 ± 0.0185 | 0.7650 ± 0.0067 | -0.1156 |
-| 5 | k-NN (Tuned with scaling) | 0.4320 ± 0.0115 | 0.7391 ± 0.0060 | -0.2180 |
-| 6 | Naïve Bayes (Baseline) | 0.3997 ± 0.0233 | 0.7915 ± 0.0038 | -0.2503 |
-| 7 | k-NN (Baseline, no scaling) | 0.2003 ± 0.0075 | 0.7159 ± 0.0068 | -0.4497 |
-
-### Next Steps (From Task_Checklist.md)
-
-1. ✅ ~~**Performance Comparison Table**: Create unified comparison script~~ (COMPLETED)
-2. ✅ ~~**Random Forest Tuning**: GridSearchCV optimization~~ (COMPLETED - F1: 0.5742→0.5995)
-3. ✅ ~~**Decision Tree Tuning**: GridSearchCV on Decision Tree~~ (COMPLETED - F1: 0.5344→0.6039, +13.0%)
-4. ✅ ~~**k-NN Tuning**: GridSearchCV with StandardScaler~~ (COMPLETED - F1: 0.2003→0.4320, +115.7%)
-5. **Class Imbalance Handling**: Experiment with `class_weight='balanced'` on Decision Tree (NEXT - OPTIONAL)
-6. **Ensemble Methods**: Try Voting Classifier combinations (OPTIONAL)
-7. **Final Model Selection**: Choose best tuned model based on CV F1
-8. **Create main.py**: Unified entry point for final submission
-9. **Generate Submission Files**:
-   - Train final model on full training dataset
-   - Generate predictions on test set
-   - Create `s4860387.infs4203` result file
-10. **Code Packaging**: Package all code for submission
+| Rank | Model                       | F1 Score        | Accuracy        | Gap to Target |
+| ---- | --------------------------- | --------------- | --------------- | ------------- |
+| 🥇 1 | Decision Tree (Tuned v3)    | 0.6092 ± 0.0143 | 0.8227 ± 0.0066 | -0.0408       |
+| 🥈 2 | Decision Tree (Tuned v2)    | 0.6068 ± 0.0154 | 0.8227 ± 0.0066 | -0.0432       |
+| 🥉 3 | Random Forest (Tuned)       | 0.5995 ± 0.0166 | 0.8363 ± 0.0056 | -0.0505       |
+| 4    | Random Forest (Baseline)    | 0.5742 ± 0.0226 | 0.8331 ± 0.0069 | -0.0758       |
+| 5    | Decision Tree (Baseline)    | 0.5344 ± 0.0185 | 0.7650 ± 0.0067 | -0.1156       |
+| 6    | k-NN (Tuned with scaling)   | 0.4320 ± 0.0115 | 0.7391 ± 0.0060 | -0.2180       |
+| 7    | Naïve Bayes (Baseline)      | 0.3997 ± 0.0233 | 0.7915 ± 0.0038 | -0.2503       |
+| 8    | k-NN (Baseline, no scaling) | 0.2003 ± 0.0075 | 0.7159 ± 0.0068 | -0.4497       |
 
 ## Development Commands
 

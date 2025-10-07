@@ -229,12 +229,12 @@ python main.py
 
 ### 基线模型对比
 
-| 模型          | Accuracy | F1 Score | 备注     |
-| ------------- | -------- | -------- | -------- |
-| Decision Tree | [待填写] | [待填写] | [待填写] |
-| Random Forest | [待填写] | [待填写] | [待填写] |
-| k-NN          | [待填写] | [待填写] | [待填写] |
-| Naïve Bayes   | [待填写] | [待填写] | [待填写] |
+| Model         | Accuracy        | F1 Score        | Notes                                |
+| ------------- | --------------- | --------------- | ------------------------------------ |
+| Random Forest | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Best baseline, high tuning potential |
+| Decision Tree | 0.7650 ± 0.0067 | 0.5344 ± 0.0185 | Good baseline, ready for tuning      |
+| Naïve Bayes   | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance                 |
+| k-NN          | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler           |
 
 ### 最终模型性能 (交叉验证)
 

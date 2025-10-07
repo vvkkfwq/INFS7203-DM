@@ -40,7 +40,7 @@
   - One-Hot Encoding
   - Label Encoding
 - [ ] 设计 2-3 种特征缩放方案（树模型暂不需要）
-  - StandardScaler
+  - StandardScaler ✅
   - MinMaxScaler
   - RobustScaler
 - [x] 使用交叉验证对比各方案
@@ -67,7 +67,7 @@
 
 **输出**: 4 个基线模型 + 性能对比表
 
-### Phase 4: 超参数调优 (开始)
+### Phase 4: 超参数调优
 
 - [x] 选出最有潜力的 2-3 个模型
 - [x] 为 Random Forest 定义参数搜索空间
@@ -80,7 +80,7 @@
 - [x] 记录最佳参数和 F1 提升
   - **最佳参数**: max_depth=10, n_estimators=100, min_samples_leaf=2, min_samples_split=2, max_features=None
   - **性能提升**: F1 Score: 0.5742 → 0.5995 (+0.0253, +4.4%)
-  - **当前与目标差距**: 0.65 - 0.5995 = 0.0505 (还需提升5个百分点)
+  - **当前与目标差距**: 0.65 - 0.5995 = 0.0505 (还需提升 5 个百分点)
 - [x] 为 Decision Tree 定义参数搜索空间
   - criterion: ['gini', 'entropy']
   - splitter: ['best', 'random']
@@ -92,16 +92,7 @@
 - [x] 记录最佳参数和 F1 提升
   - **最佳参数**: criterion='gini', splitter='best', max_depth=10, min_samples_split=20, min_samples_leaf=4, max_features=None
   - **性能提升**: F1 Score: 0.5344 → 0.6039 (+0.0695, +13.0%) 🏆
-  - **当前与目标差距**: 0.65 - 0.6039 = 0.0461 (还需提升4.6个百分点)
-
-**输出**: Random Forest + Decision Tree 调优结果对比
-
----
-
-## Week 3: 深度调优和集成 (15-20 小时)
-
-### Phase 4: 超参数调优 (继续)
-
+  - **当前与目标差距**: 0.65 - 0.6039 = 0.0461 (还需提升 4.6 个百分点)
 - [x] 为 k-NN 定义参数搜索空间
   - n_neighbors: [3, 5, 7, 9, 11, 13, 15]
   - weights: ['uniform', 'distance']
@@ -110,23 +101,54 @@
 - [x] 运行 GridSearchCV
 - [x] 记录最佳参数和 F1 提升
   - **最佳参数**: metric='manhattan', n_neighbors=3, weights='uniform'
-  - **性能提升**: F1 Score: 0.2003 → 0.4320 (+0.2317, +115.7%) 🎉 StandardScaler效果显著
+  - **性能提升**: F1 Score: 0.2003 → 0.4320 (+0.2317, +115.7%) 🎉 StandardScaler 效果显著
   - **当前与目标差距**: 0.65 - 0.4320 = 0.2180 (远不如树模型,不适合作为最终模型)
-- [x] 比较所有调优后的模型 (DT, RF, k-NN)
-- [ ] 选出 F1 最高的模型作为最终提交模型
-  - **当前最佳**: Decision Tree (Tuned) - F1=0.6039
 
-**输出**: 所有模型的最佳参数 + 性能排名
+---
 
-### Phase 5: 集成方法
+## Week 3: 深度调优和集成 (15-20 小时)
+
+### Phase 4: 超参数调优 (继续)
+
+- [x] 尝试调整 Decision Tree 网络搜索的 range
+- [ ] 尝试调整 RF 网络搜索的 range
+
+### Phase 5: 进阶优化策略
+
+#### 子阶段 5.1: 类别不平衡处理 (优先级最高 🔥)
+
+- [ ] Decision Tree 添加 `class_weight='balanced'` 参数
+  - **理由**: 数据集有 75%:25% 类别不平衡,影响 F1 Score
+  - **预期提升**: +0.02 ~ 0.05 F1
+  - **当前基线**: F1=0.6039, 目标: F1≥0.65
+- [ ] Random Forest 测试 `class_weight='balanced'`
+- [ ] 对比 class_weight 前后的 Precision/Recall/F1 变化
+- [ ] 记录最佳 class_weight 配置
+
+**输出**: class_weight 实验结果 + 性能提升报告
+
+#### 子阶段 5.2: 集成方法 (如果 5.1 未达标)
 
 - [ ] 尝试 Hard Voting Classifier
+  - 组合: Decision Tree (tuned) + Random Forest (tuned)
 - [ ] 尝试 Soft Voting Classifier
-- [ ] 优化集成权重
+  - 需要支持 predict_proba 的模型
+- [ ] 实验不同集成权重
 - [ ] 对比单模型 vs 集成性能
 - [ ] 决定最终模型 (单模型或集成)
 
 **输出**: 最终模型选择 + 性能对比
+
+#### 子阶段 5.3: 预处理-分类器协同优化 (备选)
+
+- [ ] 实验 Decision Tree + StandardScaler 组合
+- [ ] 实验 Random Forest + MinMaxScaler 组合
+- [ ] 测试 OneHotEncoder vs OrdinalEncoder 对树模型的影响
+- [ ] 为 Naïve Bayes 专门设计预处理策略
+  - 尝试特征离散化 (KBinsDiscretizer)
+  - 测试不同编码方式
+
+**输出**: 预处理-模型最佳组合表
 
 ---
 
@@ -284,9 +306,59 @@
 
 ## 🎯 性能目标
 
-**最低目标**: F1 ≥ 0.60 (10 分 - 及格)
+**最低目标**: F1 ≥ 0.60 (10 分 - 及格) ✅ 已达成 (0.6039)
 **良好目标**: F1 ≥ 0.63 (16 分 - 优秀)
-**理想目标**: F1 ≥ 0.65 (20 分 - 满分)
+**理想目标**: F1 ≥ 0.65 (20 分 - 满分) ⏳ 差距 0.0461 (4.6%)
+
+---
+
+## 🚀 后续优化路线图
+
+基于当前进度 (Decision Tree F1=0.6039) 和课程建议，按优先级排序：
+
+### 路线 A: 快速达标路线 (推荐 ⭐⭐⭐)
+
+1. **类别不平衡处理** (子阶段 5.1)
+
+   - 实现难度: ⭐☆☆☆☆ (仅需修改一个参数)
+   - 预期收益: ⭐⭐⭐⭐☆ (F1 +0.02~0.05)
+   - 时间成本: 30 分钟
+   - **关键理由**: F1 Score 对类别不平衡非常敏感,且数据集有明显的 75:25 不平衡
+
+2. **如果未达标**: Voting Classifier (子阶段 5.2)
+   - 实现难度: ⭐⭐☆☆☆
+   - 预期收益: ⭐⭐⭐☆☆ (F1 +0.01~0.03)
+   - 时间成本: 1-2 小时
+
+### 路线 B: 深度探索路线 (学习导向)
+
+1. **预处理-分类器协同实验** (子阶段 5.3)
+   - 探索不同预处理对各模型的影响
+   - 可能发现 Naïve Bayes 的最佳配置
+   - 时间成本: 3-4 小时
+   - 适合: 时间充裕且想深入理解算法的同学
+
+### 路线 C: 保守稳妥路线
+
+如果当前 F1=0.6039 已满意:
+
+- 直接进入 Phase 6 (最终验证和提交)
+- 风险: 可能无法获得满分 (20 分)
+- 优势: 节省时间,确保稳定提交
+
+### 💡 推荐决策流程
+
+```
+开始
+  ↓
+尝试 class_weight='balanced' (30分钟)
+  ↓
+F1 ≥ 0.65?
+  ├─ 是 → 进入 Phase 6 提交 🎉
+  └─ 否 → F1 ≥ 0.63?
+           ├─ 是 → 考虑是否尝试 Voting (追求满分)
+           └─ 否 → 必须尝试 Voting + 预处理优化
+```
 
 ---
 
