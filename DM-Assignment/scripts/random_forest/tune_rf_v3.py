@@ -4,7 +4,7 @@ Random Forest hyperparameter tuning script (v3).
 Experiment Goal: Refine hyperparameter search space based on v1 results
 
 Changes from v2:
-- class_weight set to "balanced_subsample" for better handling of class imbalance
+- class_weight set to "balanced" for better handling of class imbalance
 
 """
 

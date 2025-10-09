@@ -4,6 +4,8 @@ Random Forest hyperparameter tuning script (v4).
 Experiment Goal: Refine hyperparameter search space based on v3 results
 
 Changes from v3:
+- Increased n_estimators range to [100, 200, 300] based on v3 results
+- Increased max_depth range to [10, 15, 20] based on v3 results
 
 """
 

@@ -111,19 +111,18 @@
 ### Phase 4: 超参数调优 (继续)
 
 - [x] 尝试调整 Decision Tree 网络搜索的 range
-- [ ] 尝试调整 RF 网络搜索的 range
+- [x] 尝试调整 RF 网络搜索的 range
 
 ### Phase 5: 进阶优化策略
 
 #### 子阶段 5.1: 类别不平衡处理 (优先级最高 🔥)
 
-- [ ] Decision Tree 添加 `class_weight='balanced'` 参数
-  - **理由**: 数据集有 75%:25% 类别不平衡,影响 F1 Score
-  - **预期提升**: +0.02 ~ 0.05 F1
-  - **当前基线**: F1=0.6039, 目标: F1≥0.65
-- [ ] Random Forest 测试 `class_weight='balanced'`
+- [x] Decision Tree 添加 `class_weight='balanced'` 参数
+  - F1: 0.6092 ± 0.0143
+- [x] Random Forest 测试 `class_weight='balanced'`
+  - F1: 0.6419 ± 0.0119
 - [ ] 对比 class_weight 前后的 Precision/Recall/F1 变化
-- [ ] 记录最佳 class_weight 配置
+- [x] 记录最佳 class_weight 配置
 
 **输出**: class_weight 实验结果 + 性能提升报告
 

@@ -153,18 +153,18 @@ Analysis complete in `notebooks/data_exploration.ipynb` covering:
 
 ### Model Performance Ranking (After Tuning)
 
-| Rank | Model                       | F1 Score        | Accuracy        | Gap to Target |
-| ---- | --------------------------- | --------------- | --------------- | ------------- |
-| 🥇 1 | Random Forest (Tuned v3)    | 0.6419 ± 0.0119 | TBD             | +0.0081       |
-| 🥈 2 | Random Forest (Tuned v4)    | 0.6415 ± 0.0113 | TBD             | +0.0085       |
-| 🥉 3 | Decision Tree (Tuned v3)    | 0.6092 ± 0.0143 | 0.8227 ± 0.0066 | -0.0408       |
-| 4    | Decision Tree (Tuned v2)    | 0.6068 ± 0.0154 | 0.8227 ± 0.0066 | -0.0432       |
-| 5    | Random Forest (Tuned v1)    | 0.5995 ± 0.0166 | 0.8363 ± 0.0056 | -0.0505       |
-| 6    | Random Forest (Baseline)    | 0.5742 ± 0.0226 | 0.8331 ± 0.0069 | -0.0758       |
-| 7    | Decision Tree (Baseline)    | 0.5344 ± 0.0185 | 0.7650 ± 0.0067 | -0.1156       |
-| 8    | k-NN (Tuned with scaling)   | 0.4320 ± 0.0115 | 0.7391 ± 0.0060 | -0.2180       |
-| 9    | Naïve Bayes (Baseline)      | 0.3997 ± 0.0233 | 0.7915 ± 0.0038 | -0.2503       |
-| 10   | k-NN (Baseline, no scaling) | 0.2003 ± 0.0075 | 0.7159 ± 0.0068 | -0.4497       |
+| Rank | Model                       | F1 Score        | Gap to Target |
+| ---- | --------------------------- | --------------- | ------------- |
+| 🥇 1 | Random Forest (Tuned v3)    | 0.6419 ± 0.0119 | +0.0081       |
+| 🥈 2 | Random Forest (Tuned v4)    | 0.6415 ± 0.0113 | +0.0085       |
+| 🥉 3 | Decision Tree (Tuned v3)    | 0.6092 ± 0.0143 | -0.0408       |
+| 4    | Decision Tree (Tuned v2)    | 0.6068 ± 0.0154 | -0.0432       |
+| 5    | Random Forest (Tuned v1)    | 0.5995 ± 0.0166 | -0.0505       |
+| 6    | Random Forest (Baseline)    | 0.5742 ± 0.0226 | -0.0758       |
+| 7    | Decision Tree (Baseline)    | 0.5344 ± 0.0185 | -0.1156       |
+| 8    | k-NN (Tuned with scaling)   | 0.4320 ± 0.0115 | -0.2180       |
+| 9    | Naïve Bayes (Baseline)      | 0.3997 ± 0.0233 | -0.2503       |
+| 10   | k-NN (Baseline, no scaling) | 0.2003 ± 0.0075 | -0.4497       |
 
 ## Development Commands
 
