@@ -125,7 +125,6 @@ def compare_imputation_strategies():
 
             print(f"  Fold {fold}: F1={f1:.4f}, Accuracy={acc:.4f}")
 
-        # 6.7 汇总结果
         mean_f1 = np.mean(f1_scores)
         std_f1 = np.std(f1_scores)
         mean_acc = np.mean(acc_scores)
@@ -142,13 +141,12 @@ def compare_imputation_strategies():
         )
 
         print(
-            f"\n  汇总: F1={mean_f1:.4f} ± {std_f1:.4f}, "
+            f"\n  Summary: F1={mean_f1:.4f} ± {std_f1:.4f}, "
             f"Accuracy={mean_acc:.4f} ± {std_acc:.4f}"
         )
 
-    # 7. 显示结果
     print("\n" + "=" * 70)
-    print("结果汇总")
+    print("Results Summary")
     print("=" * 70)
 
     results_df = pd.DataFrame(results)
@@ -156,10 +154,10 @@ def compare_imputation_strategies():
 
     print(results_df.to_string(index=False))
 
-    # 8. 高亮最佳策略
+    # Highlighting Best Practices
     best = results_df.iloc[0]
     print("\n" + "=" * 70)
-    print(f"🏆 最佳策略: {best['Strategy']}")
+    print(f"🏆 Best strategy: {best['Strategy']}")
     print(f"   F1 Score: {best['F1_Mean']:.4f} ± {best['F1_Std']:.4f}")
     print(f"   Accuracy: {best['Accuracy_Mean']:.4f} ± {best['Accuracy_Std']:.4f}")
     print("=" * 70)
@@ -170,9 +168,9 @@ def compare_imputation_strategies():
 if __name__ == "__main__":
     try:
         results = compare_imputation_strategies()
-        print("\n✅ 比较完成！")
+        print("\n✅ Comparison complete!")
     except Exception as e:
-        print(f"\n❌ 错误: {e}")
+        print(f"\n❌ Error: {e}")
         import traceback
 
         traceback.print_exc()
