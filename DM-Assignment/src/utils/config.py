@@ -16,7 +16,7 @@ np.random.seed(RANDOM_SEED)
 
 
 # ==================== FILE PATHS ====================
-PROJECT_ROOT = Path(__file__).parent.parent
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 TRAIN_FILE = DATA_DIR / "train.csv"
 TEST_FILE = DATA_DIR / "test_data.csv"

@@ -12,7 +12,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OrdinalEncoder
 from pathlib import Path
 
-from .config import (
+from .utils.config import (
     NUM_IMPUTATION_STRATEGY,
     CAT_IMPUTATION_STRATEGY,
     UNKNOWN_VALUE,

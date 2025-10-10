@@ -25,7 +25,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import StratifiedKFold, cross_validate
 
-from src.config import (
+from src.utils.config import (
     PRIMARY_METRIC,
     RANDOM_SEED,
     SECONDARY_METRIC,

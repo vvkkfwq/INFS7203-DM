@@ -24,7 +24,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from src.config import (
+from src.utils.config import (
     RANDOM_SEED,
     TRAIN_FILE,
     CV_FOLDS,

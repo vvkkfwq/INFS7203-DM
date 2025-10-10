@@ -23,7 +23,7 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from src.config import (
+from src.utils.config import (
     RANDOM_SEED,
     TRAIN_FILE,
     CV_FOLDS,

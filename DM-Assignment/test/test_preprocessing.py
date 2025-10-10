@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.preprocessing import DataPreprocessor, load_data, verify_preprocessing
-from src.config import TRAIN_FILE, TEST_FILE, RANDOM_SEED
+from src.utils.config import TRAIN_FILE, TEST_FILE, RANDOM_SEED
 
 import numpy as np
 

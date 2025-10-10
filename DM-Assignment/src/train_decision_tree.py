@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold, cross_validate
 from pathlib import Path
 import sys
 
-from .config import (
+from .utils.config import (
     RANDOM_SEED,
     TRAIN_FILE,
     CV_FOLDS,

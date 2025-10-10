@@ -11,7 +11,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import StratifiedKFold, cross_validate
 import sys
 
-from .config import (
+from .utils.config import (
     RANDOM_SEED,
     TRAIN_FILE,
     CV_FOLDS,
