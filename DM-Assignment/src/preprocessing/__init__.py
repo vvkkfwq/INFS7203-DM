@@ -13,6 +13,13 @@ from .imputation import (
 
 from .base import BasePreprocessor
 
+from .outlier_detection import (
+    BaseOutlierDetector,
+    IsolationForestDetector,
+    LOFDetector,
+    get_outlier_detector,
+)
+
 __all__ = [
     "BasePreprocessor",
     "BaseImputer",
@@ -21,4 +28,8 @@ __all__ = [
     "ClassSpecificImputer",
     "ConstantImputer",
     "get_imputer",
+    "BaseOutlierDetector",
+    "IsolationForestDetector",
+    "LOFDetector",
+    "get_outlier_detector",
 ]
