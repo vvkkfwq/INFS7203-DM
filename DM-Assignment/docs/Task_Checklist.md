@@ -35,14 +35,13 @@
   - 方案 2: 全局数值 median/类别 mode
   - 方案 3: 全局 Constant Filling distinct special value
   - 方案 4: Class-Specific Imputation with mean/mode
+- [x] 设计异常检测处理方案
+  - LOF
+  - IsolationFores
 - [x] 设计类别编码方案
   - OrdinalEncoder ✅
-  - One-Hot Encoding
-  - Label Encoding
-- [ ] 设计 2-3 种特征缩放方案（树模型暂不需要）
-  - StandardScaler ✅
-  - MinMaxScaler
-  - RobustScaler
+  - TargetEncoding
+- [x] 实现完整的 pipeline 作预处理对比实验
 - [x] 使用交叉验证对比各方案
 - [x] 记录每个方案的 CV F1 分数
 - [x] 选择最佳预处理组合
@@ -60,6 +59,10 @@
 - [x] 训练 Decision Tree (默认参数)
 - [x] 训练 Random Forest (默认参数)
 - [x] 训练 k-NN (默认参数)
+  - [ ] 设计 2-3 种特征缩放方案（只需在 knn 中实现）
+  - StandardScaler ✅
+  - MinMaxScaler
+  - RobustScaler
 - [x] 训练 Naïve Bayes (默认参数)
 - [x] 5 折交叉验证评估
 - [x] 记录每个模型的 Accuracy 和 F1
