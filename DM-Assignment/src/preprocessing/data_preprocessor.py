@@ -54,6 +54,10 @@ class DataPreprocessor:
         self.imputer = GlobalMedianModeImputer(self.num_cols, self.cat_cols)
         self.imputer.fit(X)
 
+        X_imputed = self.imputer.transform(X)
+        if self.cat_cols:
+            self.cat_encoder.fit(X_imputed[self.cat_cols])
+
         self._is_fitted = True
         return self
 
@@ -67,8 +71,22 @@ class DataPreprocessor:
                 "Preprocessor must be fitted before transform. Call fit() first."
             )
 
-        self.X_processed = self.imputer.transform(X)
+        X_imputed = self.imputer.transform(X)
+        if self.cat_cols:
+            X_cat_encoded = self.cat_encoder.transform(X_imputed[self.cat_cols])
+            X_cat_encoded = pd.DataFrame(
+                X_cat_encoded, columns=self.cat_cols, index=X_imputed.index
+            )
+            self.X_processed = pd.concat(
+                [X_imputed[self.num_cols], X_cat_encoded], axis=1
+            )
+        else:
+            self.X_processed = X_imputed
+
         return self.X_processed
+
+    def fit_transform(self, X):
+        return self.fit(X).transform(X)
 
     def verify_preprocessing(X, description="Preprocessed Data"):
         """
