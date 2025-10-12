@@ -1,280 +1,158 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
 INFS7203 Data Mining Track 1 - Binary Classification Project
 
-- **Task**: Train binary classifiers (0/1) using Week 2-8 techniques to maximize test set F1 Score
+- **Task**: Binary classification (0/1) using Week 2-8 techniques, maximize F1 Score
 - **Deadline**: 2025-10-20 13:00 Brisbane Time
-- **Student**: s4860387
-
-**Dataset**:
-
-- Training: 10,853 samples × 43 features (25 numerical + 18 categorical)
-- Test: 2,713 samples × 43 features
-- Target: Binary (0/1), with 1 as positive class
-- Class imbalance: ~75% class 0, ~25% class 1
-- Missing values: ~10% across all features
-
-**Performance Goal**: F1 Score ≥ 0.65 for full marks (20/20)
+- **Student ID**: s4860387
+- **Dataset**: 10,853 train samples, 2,713 test samples, 43 features (25 numerical + 18 categorical)
+- **Performance Goal**: F1 Score ≥ 0.65 for full marks
 
 ## Technical Constraints
 
-**ALLOWED** (Week 2-8 techniques only):
-
-- Outlier detection
-- Normalization
-- Imputation
-- Handling categorical features
-- Ensembles
-- Decision Tree
-- Random Forest
-- k-Nearest Neighbour (k-NN)
-- Naïve Bayes
-
-**PROHIBITED** (violations result in 0 marks):
-
-- XGBoost, LightGBM, CatBoost
-- Neural Networks, Deep Learning
-- Any advanced techniques beyond Week 8
+**ALLOWED**: Outlier detection, Normalization, Imputation, Categorical encoding, Decision Tree, Random Forest, k-NN, Naïve Bayes
+**PROHIBITED**: XGBoost, LightGBM, CatBoost, Neural Networks, Deep Learning
 
 ## Directory Structure
 
 ```
 DM-Assignment/
-├── data/
-│   ├── train.csv                      # Training dataset
-│   └── test_data.csv                  # Test dataset
-├── notebooks/                         # Jupyter notebooks for exploration
-│   ├── 00_testbook.ipynb              # Testing notebook
-│   ├── 01_data_exploration.ipynb      # Initial data exploration
-│   ├── 02_missing_value_detail.ipynb  # Detailed missing value analysis
-│   └── 03_missing_value_experiments.ipynb  # Missing value imputation experiments
-├── src/                               # Source code modules
-│   ├── __init__.py                    # Package initialization
-│   ├── config.py                      # Configuration parameters (RANDOM_SEED=42)
-│   ├── preprocessing.py               # Preprocessing pipeline (Global Median/Mode + OrdinalEncoder)
-│   ├── train_decision_tree.py         # Decision Tree baseline training script
-│   ├── train_random_forest.py         # Random Forest baseline training script
-│   ├── train_knn.py                   # k-NN baseline training script
-│   └── train_naive_bayes.py           # Naïve Bayes baseline training script
-├── scripts/                           # Utility scripts
-│   ├── compare_baseline_models.py     # Unified baseline comparison script
-│   ├── tune_random_forest.py          # Random Forest hyperparameter tuning script
-│   ├── tune_decision_tree.py          # Decision Tree hyperparameter tuning script
-│   └── tune_knn.py                    # k-NN hyperparameter tuning script (with StandardScaler)
-├── test/                              # Test scripts
-│   └── test_preprocessing.py          # Preprocessing pipeline test
-├── results/                           # Model results and predictions
-│   ├── baseline_models_comparison.csv # Baseline comparison results
-│   ├── random_forest_tuning_results.csv # Random Forest tuning summary
-│   ├── random_forest_tuning_results_detailed.csv # Random Forest detailed CV results
-│   ├── decision_tree_tuning_results.csv # Decision Tree tuning summary
-│   ├── decision_tree_tuning_results_detailed.csv # Decision Tree detailed CV results
-│   ├── knn_tuning_results.csv         # k-NN tuning summary
-│   └── knn_tuning_results_detailed.csv # k-NN detailed CV results
-├── docs/                              # Documentation
-│   ├── Project_Requirements.md        # Assignment requirements
-│   └── Task_Checklist.md              # Task breakdown and progress
-├── reports/                           # Analysis reports
-│   ├── cardinality.md                 # Feature cardinality analysis
-│   ├── data_exploration_report.md     # EDA report
-│   └── missing_value_experiments_results.csv  # Experimental results
-├── CLAUDE.md                          # Claude Code project context (this file)
-└── README.md                          # Project documentation (in Chinese)
+├── data/                    # Training and test datasets
+├── src/                     # Production code (modularized framework)
+│   ├── models/              # Training framework (BaselineTrainer, HyperparameterTuner)
+│   │   └── configs/         # Model configs and parameter grids
+│   ├── preprocessing/       # DataPreprocessor and transformers
+│   └── utils/               # Metrics, I/O, config
+├── examples/                # Usage examples (quick_start.py, tune_model.py)
+├── scripts/                 # Experimental scripts (baseline/, *_tuning/)
+├── notebooks/               # EDA and experiments (*.ipynb)
+├── results/                 # Model outputs (*.csv)
+├── logs/                    # Training logs
+└── docs/                    # Requirements and task checklist
 ```
 
-## Key Data Characteristics
+**Key Modules**:
 
-**Numerical Features** (Num_Col1-25):
+- `src/models/{baseline_trainer,hyperparameter_tuner}.py`: Unified training interface
+- `src/models/configs/{model_configs,param_grids}.py`: Model registry and parameter grids
+- `src/preprocessing/data_preprocessor.py`: Data preprocessing pipeline
+- `src/utils/{metrics,io,config}.py`: Shared utilities
 
-- Wide range of scales (small decimals to large integers)
-- High variability across features
-- All have ~10% missing values (1085/10853)
+## File Placement Guidelines
 
-**Categorical Features** (Nom_Col26-43):
+**Follow these rules for organizing new code:**
 
-- Encoding format: `C{category}_c{value}` (e.g., C0_c0, C1_c3)
-- Variable cardinality: from 2 to 40 unique values
-- All have ~10% missing values (1085/10853)
+| Code Type                                      | Location                            | Examples                                             |
+| ---------------------------------------------- | ----------------------------------- | ---------------------------------------------------- |
+| **Production modules** (reusable)              | `src/`                              | BaselineTrainer, DataPreprocessor, utility functions |
+| **Exploratory tuning experiments** (versioned) | `scripts/model_name_tuning/`        | tune_rf_v1.py, tune_dt_v2.py                         |
+| **Baseline comparisons**                       | `scripts/baseline/`                 | train_baseline.py, compare_baseline_models.py        |
+| **Interactive exploration** (temporary)        | `notebooks/`                        | EDA, quick prototyping (\*.ipynb)                    |
+| **Parameter grids** (centralized)              | `src/models/configs/param_grids.py` | All model parameter grids                            |
+| **Usage demonstrations**                       | `examples/`                         | quick_start.py (show how to use src modules)         |
 
-**Missing Value Pattern**:
+**Key Principles**:
 
-- Exactly 1085 samples have missing values across ALL features
-- Rows with at least one missing value: 10734 out of 10853 (98.90%)
+- ✅ **Experiments** → `scripts/model_name_tuning/` (keep versioned history: v1, v2, v3...)
+- ✅ **Reusable code** → `src/` (modularized, tested, production-ready)
+- ✅ **Parameter configs** → `src/models/configs/param_grids.py` (centralized management)
+- ✅ **Quick tests** → `notebooks/` (interactive exploration, then migrate to scripts/)
+- ❌ **Don't mix**: Keep experiments (scripts/) separate from production code (src/)
 
-## Development Workflow
+## Quick Start (Modularized Framework)
 
-### Data Exploration (Already Completed)
+```python
+# Train baseline model (2 lines)
+from src.models import BaselineTrainer
+results = BaselineTrainer(model_name="random_forest").train()
 
-Analysis complete in `notebooks/data_exploration.ipynb` covering:
+# Hyperparameter tuning (2 lines)
+from src.models import HyperparameterTuner
+results = HyperparameterTuner(model_name="random_forest", param_grid_version="v3").train()
 
-- Dataset structure and statistics
-- Missing value patterns
-- Target variable distribution
-- Feature distributions and relationships
+# See examples/README.md for detailed usage
+```
 
-### Completed Work
+## Model Performance (Best Results)
 
-1. ✅ **Data Exploration**: Comprehensive EDA in notebooks
-2. ✅ **Preprocessing Experiments**: Tested 4 missing value strategies
-   - Best strategy: Global Median/Mode (F1=0.5952 with DecisionTree baseline)
-3. ✅ **Preprocessing Pipeline**: Implemented production-ready pipeline in `src/preprocessing.py`
-   - Missing value imputation: SimpleImputer (median for numerical, mode for categorical)
-   - Categorical encoding: OrdinalEncoder
-   - All tests passing
-4. ✅ **Baseline Models Training**: All 4 models trained with 5-fold CV using unified comparison script
-   - Script location: `scripts/compare_baseline_models.py`
-   - Results saved: `results/baseline_models_comparison.csv`
-   - Performance ranking (by F1 Score):
-     1. Random Forest: F1=0.5742 ± 0.0226 (BEST)
-     2. Decision Tree: F1=0.5344 ± 0.0185
-     3. Naïve Bayes: F1=0.3997 ± 0.0233
-     4. k-NN: F1=0.2003 ± 0.0075 (needs feature scaling)
+| Rank | Model            | F1 Score        | Status         |
+| ---- | ---------------- | --------------- | -------------- |
+| 🥇   | Random Forest v3 | 0.6419 ± 0.0119 | **TARGET MET** |
+| 🥈   | Random Forest v4 | 0.6415 ± 0.0113 | **TARGET MET** |
+| 🥉   | Decision Tree v3 | 0.6092 ± 0.0143 | Close          |
 
-### Baseline Model Results Summary
+**Baseline Comparison**:
 
-| Model         | Accuracy        | F1 Score        | Notes                                |
-| ------------- | --------------- | --------------- | ------------------------------------ |
-| Random Forest | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Best baseline, high tuning potential |
-| Decision Tree | 0.7650 ± 0.0067 | 0.5344 ± 0.0185 | Good baseline, ready for tuning      |
-| Naïve Bayes   | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance                 |
-| k-NN          | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler           |
-
-**Key Findings**:
-
-- Tree-based models (RF, DT) significantly outperform k-NN and NB
-- Random Forest shows best F1 Score (0.5742) with good stability
-- k-NN performance is poor due to lack of feature scaling
-- **Gap to target**: Need 13.2% improvement to reach F1 ≥ 0.65 for full marks
-- **Priority**: Focus hyperparameter tuning on Random Forest and Decision Tree
-
-### Model Performance Ranking (After Tuning)
-
-| Rank | Model                       | F1 Score        | Gap to Target |
-| ---- | --------------------------- | --------------- | ------------- |
-| 🥇 1 | Random Forest (Tuned v3)    | 0.6419 ± 0.0119 | +0.0081       |
-| 🥈 2 | Random Forest (Tuned v4)    | 0.6415 ± 0.0113 | +0.0085       |
-| 🥉 3 | Decision Tree (Tuned v3)    | 0.6092 ± 0.0143 | -0.0408       |
-| 4    | Decision Tree (Tuned v2)    | 0.6068 ± 0.0154 | -0.0432       |
-| 5    | Random Forest (Tuned v1)    | 0.5995 ± 0.0166 | -0.0505       |
-| 6    | Random Forest (Baseline)    | 0.5742 ± 0.0226 | -0.0758       |
-| 7    | Decision Tree (Baseline)    | 0.5344 ± 0.0185 | -0.1156       |
-| 8    | k-NN (Tuned with scaling)   | 0.4320 ± 0.0115 | -0.2180       |
-| 9    | Naïve Bayes (Baseline)      | 0.3997 ± 0.0233 | -0.2503       |
-| 10   | k-NN (Baseline, no scaling) | 0.2003 ± 0.0075 | -0.4497       |
+- Random Forest: 0.5742 → 0.6419 (+11.8% improvement)
+- Decision Tree: 0.5344 → 0.6092 (+14.0% improvement)
+- k-NN: 0.2003 → 0.4320 (needs StandardScaler)
+- Naïve Bayes: 0.3997 (baseline only)
 
 ## Development Commands
 
-**Current environment**: Python 3.10 with conda environment `dm`
-
 ```bash
-# Test preprocessing pipeline
-python test/test_preprocessing.py
+# Environment: Python 3.10, conda env `dm`
 
-# Compare baseline models (completed)
-python scripts/compare_baseline_models.py
+# Quick examples
+python examples/quick_start.py        # Demonstrate framework usage
+python examples/tune_model.py         # Tuning examples
 
-# Hyperparameter tuning
-python scripts/tune_random_forest.py      # Completed ✅
-python scripts/tune_decision_tree.py      # Completed ✅
-python scripts/tune_knn.py                # Completed ✅
+# Legacy scripts (completed experiments)
+python scripts/baseline/train_baseline.py
+python scripts/random_forest_tuning/tune_rf_v3.py
+python scripts/decision_tree_tuning/tune_dt_v3.py
 
-# Run main pipeline (to be implemented)
-python main.py
-
-# Expected output: s4860387.infs4203
+# Main pipeline (to be implemented)
+python main.py  # Generate s4860387.infs4203
 ```
 
-**Dependencies** (to be added to requirements.txt):
+## Key Implementation Details
 
-- pandas
-- numpy
-- scikit-learn
-- matplotlib
-- seaborn
+**Preprocessing**:
 
-## Reproducibility Requirements
+- Imputation: SimpleImputer (median for numerical, mode for categorical)
+- Encoding: OrdinalEncoder for categorical features
+- Scaling: StandardScaler for k-NN only
 
-**Critical**: All random operations must use `RANDOM_SEED = 42`
+**Cross-Validation**:
 
-```python
-import random
-import numpy as np
+- StratifiedKFold (5 folds) to maintain class balance
+- RANDOM_SEED = 42 for all operations
 
-RANDOM_SEED = 42
-random.seed(RANDOM_SEED)
-np.random.seed(RANDOM_SEED)
+**Missing Values**:
 
-# In models
-model = RandomForestClassifier(random_state=RANDOM_SEED)
+- 1,085 samples (10%) have missing values across ALL 43 features
 
-# In cross-validation
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_SEED)
-```
+**Class Imbalance**:
+
+- 75% class 0, 25% class 1 (handled via class_weight='balanced' in best models)
 
 ## Submission Requirements
 
 **Result File** (`s4860387.infs4203`):
 
-```
-Format: 2,714 lines total
-- Lines 1-2713: Test predictions (0, or 1,)
-- Line 2714: CV results (accuracy,f1,)
-
-Example:
-0,
-1,
-0,
-...
-0.856,0.743,
-```
+- 2,714 lines: first 2,713 lines = test predictions (0, or 1,), last line = CV scores (accuracy,f1,)
 
 **Code Package** (`s4860387.zip`):
 
-- All code as .py files (NO .ipynb)
-- main.py as entry point
-- train.csv and test_data.csv included
-- README.md with environment, steps, configuration, and rationale
-- requirements.txt with exact package versions
-
-## Important Notes
-
-- Code must be in .py format for submission (not .ipynb)
-- README.md is in Chinese (project requirement)
-- All 1085 rows with missing values have missingness across ALL 43 features
-- Class imbalance (3:1 ratio) may require addressing
-- F1 Score is the primary metric (accuracy is secondary)
-- Cross-validation must be stratified to maintain class distribution
+- main.py entry point, all .py files (NO .ipynb), data files, README.md (Chinese), requirements.txt
 
 ## Current Status
 
-**Completed (Phase 1-3)**:
+**Completed**:
 
-- ✅ Data exploration and analysis
-- ✅ Missing value pattern identification and experiments
-- ✅ Feature distribution analysis
-- ✅ Project structure setup
-- ✅ Preprocessing pipeline implementation and testing
-- ✅ Baseline models training (all 4 models)
-- ✅ Performance comparison table generation
+- ✅ EDA and preprocessing experiments
+- ✅ Modularized training framework (BaselineTrainer, HyperparameterTuner)
+- ✅ Baseline training (all 4 models)
+- ✅ Hyperparameter tuning (RF, DT, k-NN)
+- ✅ Target F1 ≥ 0.65 achieved (RF v3/v4)
 
-**Completed (Phase 4)**:
+**Remaining** (see `docs/Task_Checklist.md` for details):
 
-- ✅ Random Forest hyperparameter tuning (F1: 0.5742→0.5995, +4.4%)
-- ✅ Decision Tree hyperparameter tuning (F1: 0.5344→0.6039, +13.0%) 🏆 BEST MODEL
-- ✅ k-NN hyperparameter tuning (F1: 0.2003→0.4320, +115.7%, with StandardScaler)
-
-**To Do (Phase 5-6)**:
-
-- ⏳ Final model selection and training
-- ⏳ Create main.py entry point
-- ⏳ Generate test predictions
-- ⏳ Create submission result file (s4860387.infs4203)
-- ⏳ Package code for submission (s4860387.zip)
-- ⏳ Write README.md documentation
-- ⏳ Create requirements.txt
-
-**Note**: Please refer to `docs/Task_Checklist.md` for detailed task breakdown and `docs/Project_Requirements.md` for submission requirements.
+- ⏳ Implement main.py
+- ⏳ Generate submission files (s4860387.infs4203, s4860387.zip)
+- ⏳ Finalize README.md and requirements.txt
