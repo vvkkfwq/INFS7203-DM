@@ -145,6 +145,20 @@ VOTING_GRIDS = {
         # Format: weights for [RF, DT]
         "weights": [[1, 1], [2, 1], [3, 1]],
     },
+    "v5": {
+        # Voting strategy
+        "voting": ["soft", "hard"],
+        # Weight combinations for base estimators
+        # Format: weights for [RF, DT]
+        "weights": [[1, 1], [1, 2], [2, 1], [3, 1]],
+    },
+    "v6": {
+        # Voting strategy
+        "voting": ["soft", "hard"],
+        # Weight combinations for base estimators
+        # Format: weights for [RF, DT]
+        "weights": [[1, 1], [1, 2], [2, 1], [3, 1]],
+    },
 }
 
 

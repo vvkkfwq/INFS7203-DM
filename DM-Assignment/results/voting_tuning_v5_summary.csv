@@ -1,0 +1,2 @@
+model_name,version,best_params,best_f1_score,f1_std,improvement_pct
+voting,v5,"{'voting': 'hard', 'weights': [2, 1]}",0.6419475451518355,0.01192194839874926,0.007406940619328682
