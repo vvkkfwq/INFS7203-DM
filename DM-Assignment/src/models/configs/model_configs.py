@@ -8,7 +8,12 @@ This module provides:
 """
 
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    VotingClassifier,
+    AdaBoostClassifier,
+    BaggingClassifier,
+)
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from typing import Dict, Any, Optional
@@ -22,6 +27,10 @@ MODEL_REGISTRY = {
     "random_forest": RandomForestClassifier,
     "knn": KNeighborsClassifier,
     "naive_bayes": GaussianNB,
+    # Ensemble methods
+    "voting": VotingClassifier,
+    "adaboost": AdaBoostClassifier,
+    "bagging": BaggingClassifier,
 }
 
 
@@ -51,6 +60,24 @@ MODEL_METADATA = {
         "needs_scaling": False,
         "supports_parallelization": False,
     },
+    "voting": {
+        "display_name": "Voting Classifier",
+        "description": "Ensemble combining multiple models via voting",
+        "needs_scaling": False,  # Depends on base estimators
+        "supports_parallelization": True,
+    },
+    "adaboost": {
+        "display_name": "AdaBoost",
+        "description": "Adaptive Boosting ensemble",
+        "needs_scaling": False,
+        "supports_parallelization": False,
+    },
+    "bagging": {
+        "display_name": "Bagging",
+        "description": "Bootstrap Aggregating ensemble",
+        "needs_scaling": False,
+        "supports_parallelization": True,
+    },
 }
 
 
@@ -69,6 +96,19 @@ DEFAULT_MODEL_PARAMS = {
     "naive_bayes": {
         # Naive Bayes has no random_state parameter
     },
+    "voting": {
+        # Voting classifier requires estimators parameter
+        # Will be set dynamically in ensemble-specific code
+        "voting": "soft",  # Default to soft voting (uses predict_proba)
+        "n_jobs": -1,
+    },
+    "adaboost": {
+        "random_state": RANDOM_SEED,
+    },
+    "bagging": {
+        "random_state": RANDOM_SEED,
+        "n_jobs": -1,
+    },
 }
 
 
@@ -78,9 +118,7 @@ class ModelFactory:
     """
 
     @staticmethod
-    def create_model(
-        model_name: str, params: Optional[Dict[str, Any]] = None
-    ) -> Any:
+    def create_model(model_name: str, params: Optional[Dict[str, Any]] = None) -> Any:
         """
         Create a model instance with specified parameters.
 

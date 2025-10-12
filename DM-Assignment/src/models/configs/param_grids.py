@@ -82,10 +82,9 @@ RANDOM_FOREST_GRIDS = {
 KNN_GRIDS = {
     "v1": {
         # Initial search
-        "n_neighbors": [3, 5, 7, 9, 11],
+        "n_neighbors": [3, 5, 7, 9, 11, 13, 15],
         "weights": ["uniform", "distance"],
-        "algorithm": ["auto", "ball_tree", "kd_tree", "brute"],
-        "leaf_size": [20, 30, 40],
+        "algorithm": ["auto"],
         "p": [1, 2],  # 1=manhattan, 2=euclidean
     },
     "v2": {
@@ -93,7 +92,6 @@ KNN_GRIDS = {
         "n_neighbors": [5, 7, 9, 11, 13],
         "weights": ["uniform", "distance"],
         "algorithm": ["auto"],
-        "leaf_size": [30],
         "p": [2],
     },
 }
@@ -103,6 +101,90 @@ KNN_GRIDS = {
 NAIVE_BAYES_GRIDS = {
     "v1": {
         "var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5],
+    },
+}
+
+
+# Voting Classifier parameter grids
+# Note: estimators must be provided separately
+VOTING_GRIDS = {
+    "v1": {
+        # Voting strategy
+        "voting": ["soft", "hard"],
+        # Weight combinations for base estimators
+        # Format: weights for [RF, DT, NB]
+        "weights": [
+            [1, 1, 1],  # Equal weights
+            [2, 1, 1],  # Favor RF
+            [3, 2, 1],  # Progressive weights
+            [2, 2, 1],  # Favor trees
+        ],
+    },
+    "v2": {
+        # Voting strategy
+        "voting": ["soft", "hard"],
+        # Weight combinations for base estimators
+        # Format: weights for [RF, DT]
+        "weights": [
+            [1, 1],
+            [2, 1],
+            [1, 2],
+        ],
+    },
+    "v3": {
+        # Voting strategy
+        "voting": ["soft", "hard"],
+        # Weight combinations for base estimators
+        # Format: weights for [RF, DT]
+        "weights": [[2, 1], [3, 1], [4, 1]],
+    },
+    "v4": {
+        # Voting strategy
+        "voting": ["soft", "hard"],
+        # Weight combinations for base estimators
+        # Format: weights for [RF, DT]
+        "weights": [[1, 1], [2, 1], [3, 1]],
+    },
+}
+
+
+# AdaBoost parameter grids
+ADABOOST_GRIDS = {
+    "v1": {
+        # Initial broad search
+        "n_estimators": [50, 100, 200],
+        "learning_rate": [0.01, 0.1, 0.5, 1.0],
+    },
+    "v2": {
+        # Refined search
+        "n_estimators": [100, 150, 200, 250],
+        "learning_rate": [0.1, 0.3, 0.5, 0.7],
+    },
+    "v3": {
+        # Fine-tuning
+        "n_estimators": [150, 200, 250],
+        "learning_rate": [0.3, 0.5, 0.7],
+    },
+}
+
+
+# Bagging parameter grids
+BAGGING_GRIDS = {
+    "v1": {
+        # Initial broad search
+        "n_estimators": [10, 50, 100],
+        "max_samples": [0.5, 0.7, 1.0],
+        "max_features": [0.5, 0.7, 1.0],
+        "bootstrap": [True, False],
+        "bootstrap_features": [False, True],
+    },
+    "v2": {
+        # Refined search
+        "n_estimators": [50, 100, 150],
+        "max_samples": [0.7, 0.8, 0.9, 1.0],
+        "max_features": [0.8, 0.9, 1.0],
+        "bootstrap": [True],
+        "bootstrap_features": [False],
     },
 }
 
@@ -139,6 +221,9 @@ def get_param_grid(model_name: str, version: str = "v1") -> Dict[str, Any]:
         "random_forest": RANDOM_FOREST_GRIDS,
         "knn": KNN_GRIDS,
         "naive_bayes": NAIVE_BAYES_GRIDS,
+        "voting": VOTING_GRIDS,
+        "adaboost": ADABOOST_GRIDS,
+        "bagging": BAGGING_GRIDS,
     }
 
     if model_name not in grid_registry:
@@ -176,6 +261,9 @@ def get_available_versions(model_name: str) -> list:
         "random_forest": RANDOM_FOREST_GRIDS,
         "knn": KNN_GRIDS,
         "naive_bayes": NAIVE_BAYES_GRIDS,
+        "voting": VOTING_GRIDS,
+        "adaboost": ADABOOST_GRIDS,
+        "bagging": BAGGING_GRIDS,
     }
 
     if model_name not in grid_registry:

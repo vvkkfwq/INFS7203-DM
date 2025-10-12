@@ -20,6 +20,8 @@ from .outlier_detection import (
     get_outlier_detector,
 )
 
+from .data_preprocessor import DataPreprocessor, load_data
+
 __all__ = [
     "BasePreprocessor",
     "BaseImputer",
@@ -32,4 +34,6 @@ __all__ = [
     "IsolationForestDetector",
     "LOFDetector",
     "get_outlier_detector",
+    "DataPreprocessor",
+    "load_data",
 ]

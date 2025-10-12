@@ -131,13 +131,13 @@
 
 #### 子阶段 5.2: 集成方法 (如果 5.1 未达标)
 
-- [ ] 尝试 Hard Voting Classifier
+- [x] 尝试 Hard Voting Classifier
   - 组合: Decision Tree (tuned) + Random Forest (tuned)
-- [ ] 尝试 Soft Voting Classifier
+- [x] 尝试 Soft Voting Classifier
   - 需要支持 predict_proba 的模型
-- [ ] 实验不同集成权重
-- [ ] 对比单模型 vs 集成性能
-- [ ] 决定最终模型 (单模型或集成)
+- [x] 实验不同集成权重
+- [x] 对比单模型 vs 集成性能
+- [x] 决定最终模型 (单模型或集成)
 
 **输出**: 最终模型选择 + 性能对比
 

@@ -79,17 +79,24 @@ results = HyperparameterTuner(model_name="random_forest", param_grid_version="v3
 
 ## Model Performance (Best Results)
 
-| Rank | Model            | F1 Score        | Status         |
-| ---- | ---------------- | --------------- | -------------- |
-| 🥇   | Random Forest v3 | 0.6419 ± 0.0119 | **TARGET MET** |
-| 🥈   | Random Forest v4 | 0.6415 ± 0.0113 | **TARGET MET** |
-| 🥉   | Decision Tree v3 | 0.6092 ± 0.0143 | Close          |
+| Rank | Model               | F1 Score (Mean ± Std) | Status            | Key Params                                       |
+| ---- | ------------------- | --------------------- | ----------------- | ------------------------------------------------ |
+| 🥇   | **Voting v3**       | **0.6505** ± 0.0164   | **🎯 BEST MODEL** | soft, weights=[2,1] (RF+DT without class_weight) |
+| 🥈   | Random Forest v3    | 0.6419 ± 0.0119       | **TARGET MET**    | n_estimators=200, max_depth=20                   |
+| 🥉   | Random Forest v4    | 0.6415 ± 0.0113       | **TARGET MET**    | n_estimators=300, max_depth=25                   |
+| 4    | Voting v2           | 0.6401 ± 0.0073       | Target Met        | soft, weights=[2,1] (RF+DT)                      |
+| 5    | Voting v1           | 0.6237 ± 0.0202       | Below Target      | soft, weights=[3,2,1] (RF+DT+NB)                 |
+| 6    | AdaBoost v1         | 0.6147 ± 0.0127       | Below Target      | n_estimators=200, learning_rate=1.0              |
+| 7    | Decision Tree v3    | 0.6092 ± 0.0143       | Close             | max_depth=10, min_samples_split=5                |
+| 8    | k-NN v1 (no scaler) | 0.3027 ± 0.0104       | Poor              | n_neighbors=3, weights=uniform, p=1              |
 
-**Baseline Comparison**:
+**Baseline Comparison** (Baseline → Best Tuned):
 
+- **Voting Ensemble**: 0.6419 → **0.6505** (+1.3% improvement) ✨ **NEW BEST**
 - Random Forest: 0.5742 → 0.6419 (+11.8% improvement)
 - Decision Tree: 0.5344 → 0.6092 (+14.0% improvement)
-- k-NN: 0.2003 → 0.4320 (needs StandardScaler)
+- AdaBoost: N/A → 0.6147 (new model tested)
+- k-NN: 0.2003 → 0.3027 (still poor without StandardScaler)
 - Naïve Bayes: 0.3997 (baseline only)
 
 ## Development Commands
@@ -147,12 +154,23 @@ python main.py  # Generate s4860387.infs4203
 
 - ✅ EDA and preprocessing experiments
 - ✅ Modularized training framework (BaselineTrainer, HyperparameterTuner)
-- ✅ Baseline training (all 4 models)
-- ✅ Hyperparameter tuning (RF, DT, k-NN)
-- ✅ Target F1 ≥ 0.65 achieved (RF v3/v4)
+- ✅ Baseline training (all 4 basic models: RF, DT, k-NN, NB)
+- ✅ Hyperparameter tuning (RF v1-v4, DT v1-v3, k-NN v1)
+- ✅ Ensemble model tuning (Voting v1-v3, AdaBoost v1)
+- ✅ **Target F1 ≥ 0.65 achieved and exceeded** (Voting v3: **0.6505**)
+- ✅ **New best model identified**: Voting Classifier (soft voting, RF+DT with weights [2,1])
+
+**Tuning Summary**:
+
+- Random Forest: 4 versions tested → v3 best (0.6419)
+- Decision Tree: 3 versions tested → v3 best (0.6092)
+- Voting Ensemble: 3 versions tested → v3 best (0.6505) 🎯
+- AdaBoost: 1 version tested (0.6147, below target)
+- k-NN: 1 version tested (0.3027, needs StandardScaler improvement)
 
 **Remaining** (see `docs/Task_Checklist.md` for details):
 
-- ⏳ Implement main.py
+- ⏳ Implement main.py using best model (Voting v3)
 - ⏳ Generate submission files (s4860387.infs4203, s4860387.zip)
-- ⏳ Finalize README.md and requirements.txt
+- ⏳ Finalize README.md (Chinese) and requirements.txt
+- 🔄 Optional: Try k-NN v2 with StandardScaler, explore Bagging/Stacking ensembles

@@ -48,6 +48,9 @@ def main():
     print(
         f"  Best F1: {tuning_results['best_f1_score']:.4f} ± {tuning_results['f1_std']:.4f}"
     )
+    if tuning_results["baseline_score"]:
+        print(f"   Baseline (RF v3): {tuning_results['baseline_score']:.4f}")
+        print(f"   Improvement: {tuning_results['improvement_pct']:+.2f}%")
     print(f"  Best params: {tuning_results['best_params']}")
 
 
