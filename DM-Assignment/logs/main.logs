@@ -1,0 +1,57 @@
+======================================================================
+GENERATING FINAL SUBMISSION
+======================================================================
+
+[1/6] Loading training data...
+  ✓ Loaded 10853 samples with 43 features
+  ✓ Class distribution: {0: np.int64(8170), 1: np.int64(2683)}
+
+[2/6] Preprocessing data...
+  ✓ Preprocessing complete
+  ✓ Missing values after preprocessing(train set): 0
+  ✓ Missing values after preprocessing(test set): 0
+
+[3/6] Creating models: RF + DT with VotingClassifier...
+
+   Model Configuration:
+
+     Random Forest Parameter:
+      - n_estimators: 80
+      - max_depth: 10
+      - min_samples_split: 2
+      - min_samples_leaf: 2
+      - max_features: None
+      - class_weight: balanced
+      - random_state: 42
+
+     Decision Tree Parameter:
+      - criterion: gini
+      - splitter: best
+      - max_depth: 10
+      - min_samples_split: 40
+      - min_samples_leaf: 4
+      - max_features: None
+      - random_state: 42
+
+      Voting Classifier:
+      - voting: soft
+      - weights: [2, 1]
+
+[4/6] Training and evaluating...
+   Running 5-fold cross-validation...
+   Cross-validation completed!
+   Training final model on complete dataset...
+   Final model training completed!
+
+ Cross-validation results:
+  ✓ Accuracy: 0.815 ± 0.012
+  ✓ F1 Score: 0.650 ± 0.016
+
+[5/6] Predict test set...
+
+[6/6] Saving submission file...
+ Submission file saved: s4860387.infs4203
+======================================================================
+
+ Done!
+======================================================================
