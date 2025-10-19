@@ -1,0 +1,2 @@
+model,accuracy_mean,accuracy_std,f1_mean,f1_std,baseline_f1,f1_improvement,param_var_smoothing
+Naïve Bayes (Tuned v0),0.7916044706602092,0.005506594947297298,0.4014108038391505,0.025261100808737506,0.4014,1.0803839150530514e-05,1e-09

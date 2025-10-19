@@ -1,0 +1,2 @@
+model,accuracy_mean,accuracy_std,f1_mean,f1_std,baseline_f1,f1_improvement,param_algorithm,param_n_neighbors,param_p,param_weights
+k-Nearest Neighbors (Tuned v0),0.7095125444860673,0.005809390055266614,0.30448406536056416,0.007598549763959363,0.2023,0.10218406536056415,auto,3,1,uniform
