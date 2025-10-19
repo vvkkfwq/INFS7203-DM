@@ -76,7 +76,6 @@ class IsolationForestDetector(BaseOutlierDetector):
             contamination=self.contamination,
             random_state=self.random_state,
             n_estimators=self.n_estimators,
-            n_jobs=-1,
             verbose=1,
         )
 
@@ -100,11 +99,10 @@ class LOFDetector(BaseOutlierDetector):
     Outlier detection using Local Outlier Factor (LOF) algorithm.
     """
 
-    def __init__(self, num_cols, n_neighbors=20, contamination=0.1, metric="euclidean"):
+    def __init__(self, num_cols, n_neighbors=20, contamination=0.1):
         super().__init__(num_cols)
         self.n_neighbors = n_neighbors
         self.contamination = contamination
-        self.metric = metric
         self.detector = None
         self.scaler = None
 
@@ -124,9 +122,6 @@ class LOFDetector(BaseOutlierDetector):
         self.detector = LocalOutlierFactor(
             n_neighbors=self.n_neighbors,
             contamination=self.contamination,
-            metric=self.metric,
-            novelty=False,  # fit_predict mode for training set
-            n_jobs=-1,
         )
 
         # fit_predict returns: 1 for inliers, -1 for outliers

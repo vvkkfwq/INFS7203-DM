@@ -69,18 +69,6 @@ class GlobalMeanModeImputer(BaseImputer):
         self.cat_imputer = SimpleImputer(strategy="most_frequent")
 
 
-class ConstantImputer(BaseImputer):
-
-    def __init__(
-        self, num_cols, cat_cols, num_fill_value=-999, cat_fill_value="MISSING"
-    ):
-
-        super().__init__(num_cols, cat_cols)
-
-        self.num_imputer = SimpleImputer(strategy="constant", fill_value=num_fill_value)
-        self.cat_imputer = SimpleImputer(strategy="constant", fill_value=cat_fill_value)
-
-
 class ClassSpecificImputer(BaseImputer):
 
     def __init__(self, num_cols, cat_cols):
@@ -159,7 +147,6 @@ def get_imputer(strategy="median_mode", num_cols=None, cat_cols=None):
     strategies = {
         "median_mode": GlobalMedianModeImputer,
         "mean_mode": GlobalMeanModeImputer,
-        "constant": ConstantImputer,
         "class_specific": ClassSpecificImputer,
     }
 

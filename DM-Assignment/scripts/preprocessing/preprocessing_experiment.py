@@ -19,7 +19,6 @@ from src.utils.config import CV_FOLDS, CV_SHUFFLE, RANDOM_SEED, TRAIN_FILE, TARG
 from src.preprocessing import (
     GlobalMedianModeImputer,
     GlobalMeanModeImputer,
-    ConstantImputer,
     ClassSpecificImputer,
     IsolationForestDetector,
     LOFDetector,
@@ -61,15 +60,23 @@ def compare_preprocessing_pipelines():
     imputation_strategies = {
         "GlobalMedianModeImputer": lambda: GlobalMedianModeImputer(num_cols, cat_cols),
         "GlobalMeanModeImputer": lambda: GlobalMeanModeImputer(num_cols, cat_cols),
-        "ConstantImputer": lambda: ConstantImputer(num_cols, cat_cols),
         "ClassSpecificImputer": lambda: ClassSpecificImputer(num_cols, cat_cols),
     }
 
     outlier_strategies = {
         "NoOutlier": lambda: None,
+        "IsoForest_0.01": lambda: IsolationForestDetector(num_cols, contamination=0.01),
         "IsoForest_0.05": lambda: IsolationForestDetector(num_cols, contamination=0.05),
         "IsoForest_0.10": lambda: IsolationForestDetector(num_cols, contamination=0.10),
-        "LOF_k20": lambda: LOFDetector(num_cols, n_neighbors=20, contamination=0.10),
+        "LOF_k20_c0.01": lambda: LOFDetector(
+            num_cols, n_neighbors=20, contamination=0.01
+        ),
+        "LOF_k20_c0.05": lambda: LOFDetector(
+            num_cols, n_neighbors=20, contamination=0.05
+        ),
+        "LOF_k20_c0.10": lambda: LOFDetector(
+            num_cols, n_neighbors=20, contamination=0.10
+        ),
     }
 
     feature_encoder_strategies = {
@@ -238,6 +245,28 @@ def compare_preprocessing_pipelines():
     print(f"   Accuracy: {best['Accuracy_Mean']:.4f} ± {best['Accuracy_Std']:.4f}")
     print(f"   Avg Outliers Removed: {best['Avg_Outliers_Removed']:.0f}")
     print("=" * 70)
+
+    # save result
+    output_file = f"results/preprocessing_comparison.csv"
+    results_df.to_csv(output_file, index=False)
+    print(f"\n✅ Results saved to: {output_file}")
+
+    # save best config
+    summary_file = f"results/preprocessing_best_config.txt"
+    with open(summary_file, "w") as f:
+        f.write("=" * 70 + "\n")
+        f.write("BEST PREPROCESSING CONFIGURATION\n")
+        f.write("=" * 70 + "\n\n")
+        f.write(f"Pipeline: {best['Pipeline']}\n")
+        f.write(f"Imputation: {best['Imputation']}\n")
+        f.write(f"Outlier Detection: {best['Outlier_Detection']}\n")
+        f.write(f"Feature Encoding: {best['Feature_Encoding']}\n\n")
+        f.write(f"F1 Score: {best['F1_Mean']:.4f} ± {best['F1_Std']:.4f}\n")
+        f.write(f"Accuracy: {best['Accuracy_Mean']:.4f} ± {best['Accuracy_Std']:.4f}\n")
+        f.write(f"Avg Outliers Removed: {best['Avg_Outliers_Removed']:.0f}\n")
+        f.write("=" * 70 + "\n")
+
+    print(f"✅ Best config saved to: {summary_file}")
 
     return results_df
 

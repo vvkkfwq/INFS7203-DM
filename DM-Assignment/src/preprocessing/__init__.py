@@ -6,7 +6,6 @@ from .imputation import (
     BaseImputer,
     GlobalMedianModeImputer,
     GlobalMeanModeImputer,
-    ConstantImputer,
     ClassSpecificImputer,
     get_imputer,
 )
@@ -28,7 +27,6 @@ __all__ = [
     "GlobalMedianModeImputer",
     "GlobalMeanModeImputer",
     "ClassSpecificImputer",
-    "ConstantImputer",
     "get_imputer",
     "BaseOutlierDetector",
     "IsolationForestDetector",

@@ -1,0 +1,13 @@
+======================================================================
+BEST PREPROCESSING CONFIGURATION
+======================================================================
+
+Pipeline: GlobalMeanModeImputer+NoOutlier+TargetEncoder
+Imputation: GlobalMeanModeImputer
+Outlier Detection: NoOutlier
+Feature Encoding: TargetEncoder
+
+F1 Score: 0.5993 ± 0.0120
+Accuracy: 0.8245 ± 0.0038
+Avg Outliers Removed: 0
+======================================================================
