@@ -48,6 +48,7 @@ class BaseTrainer(ABC):
         self.X_train = None
         self.y_train = None
         self.X_train_processed = None
+        self.y_train_processed = None
 
         # Model containers
         self.model = None
@@ -102,8 +103,8 @@ class BaseTrainer(ABC):
         # Create new preprocessor if not provided
         if self.preprocessor is None:
             self.preprocessor = DataPreprocessor()
-            self.X_train_processed = self.preprocessor.fit_transform(
-                self.X_train, self.y_train
+            self.X_train_processed, self.y_train_processed = (
+                self.preprocessor.fit_transform(self.X_train, self.y_train)
             )
         else:
             # Use provided fitted preprocessor

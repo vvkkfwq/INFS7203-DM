@@ -11,13 +11,18 @@ from typing import Optional, Dict, Any
 from sklearn.model_selection import GridSearchCV
 
 from .base_trainer import BaseTrainer
-from .configs import ModelFactory, get_model_config, get_param_grid, needs_class_weight
+from .configs import (
+    ModelFactory,
+    get_model_config,
+    get_param_grid,
+    get_model_baseline_score,
+)
 from src.utils.metrics import (
     setup_cross_validation,
     compare_with_baseline,
     display_training_progress,
 )
-from src.utils.config import PRIMARY_METRIC, CV_FOLDS
+from src.utils.config import PRIMARY_METRIC, CV_FOLDS, SECONDARY_METRIC
 
 
 class HyperparameterTuner(BaseTrainer):
@@ -35,7 +40,6 @@ class HyperparameterTuner(BaseTrainer):
         self,
         model_name: str,
         param_grid_version: str = "v1",
-        baseline_score: Optional[float] = None,
         custom_param_grid: Optional[Dict[str, Any]] = None,
         base_model_params: Optional[Dict[str, Any]] = None,
         data_file: Optional[str] = None,
@@ -57,11 +61,15 @@ class HyperparameterTuner(BaseTrainer):
             verbose (bool): Whether to print progress
             n_jobs (int): Number of parallel jobs for GridSearchCV
         """
-        super().__init__(data_file=data_file, preprocessor=preprocessor, verbose=verbose)
+        super().__init__(
+            data_file=data_file, preprocessor=preprocessor, verbose=verbose
+        )
 
         self.model_name = model_name.lower()
         self.param_grid_version = param_grid_version
-        self.baseline_score = baseline_score
+        self.baseline_score = float(
+            get_model_baseline_score(self.model_name)["f1_mean"]
+        )
         self.custom_param_grid = custom_param_grid
         self.base_model_params = base_model_params or {}
         self.n_jobs = n_jobs
@@ -100,10 +108,6 @@ class HyperparameterTuner(BaseTrainer):
             total_combinations = np.prod([len(v) for v in param_grid.values()])
             print(f"  ✓ Total combinations: {total_combinations}")
 
-        # Check if this version needs class_weight
-        if needs_class_weight(self.model_name, self.param_grid_version):
-            self.base_model_params["class_weight"] = "balanced"
-
         # Create base model
         self.model = ModelFactory.create_model(self.model_name, self.base_model_params)
 
@@ -122,7 +126,8 @@ class HyperparameterTuner(BaseTrainer):
         self.grid_search = GridSearchCV(
             estimator=self.model,
             param_grid=self.param_grid,
-            scoring=PRIMARY_METRIC,
+            scoring=[PRIMARY_METRIC, SECONDARY_METRIC],
+            refit=PRIMARY_METRIC,
             cv=cv,
             n_jobs=self.n_jobs,
             verbose=1 if self.verbose else 0,
@@ -145,7 +150,7 @@ class HyperparameterTuner(BaseTrainer):
             )
             print()
 
-        self.grid_search.fit(self.X_train_processed, self.y_train)
+        self.grid_search.fit(self.X_train_processed, self.y_train_processed)
 
         # Extract results
         self.best_params = self.grid_search.best_params_
@@ -154,16 +159,22 @@ class HyperparameterTuner(BaseTrainer):
 
         # Get best model statistics
         best_idx = self.grid_search.best_index_
-        f1_mean = self.grid_search.cv_results_["mean_test_score"][best_idx]
-        f1_std = self.grid_search.cv_results_["std_test_score"][best_idx]
+        accuracy_mean = self.grid_search.cv_results_["mean_test_accuracy"][best_idx]
+        accuracy_std = self.grid_search.cv_results_["std_test_accuracy"][best_idx]
+        f1_mean = self.grid_search.cv_results_["mean_test_f1"][best_idx]
+        f1_std = self.grid_search.cv_results_["std_test_f1"][best_idx]
 
         # Store results
         self.results = {
             "cv_scores": {
+                "accuracy_mean": accuracy_mean,
+                "accuracy_std": accuracy_std,
                 "f1_mean": f1_mean,
                 "f1_std": f1_std,
             },
             "best_params": self.best_params,
+            "best_accuracy": accuracy_mean,
+            "accuracy_std": accuracy_std,
             "best_f1_score": f1_mean,
             "f1_std": f1_std,
         }
@@ -207,13 +218,13 @@ class HyperparameterTuner(BaseTrainer):
         print(f"\nTop {top_n} Parameter Combinations:")
 
         results_df = pd.DataFrame(self.grid_search.cv_results_)
-        results_df = results_df.sort_values("rank_test_score")
+        results_df = results_df.sort_values("rank_test_f1")
 
         for idx, row in results_df.head(top_n).iterrows():
-            print(f"\n  Rank {int(row['rank_test_score'])}:")
+            print(f"\n  Rank {int(row['rank_test_f1'])}:")
             print(
-                f"    F1 Score: {row['mean_test_score']:.4f} ± "
-                f"{row['std_test_score']:.4f}"
+                f"    F1 Score: {row['mean_test_f1']:.4f} ± "
+                f"{row['std_test_f1']:.4f}"
             )
             print(f"    Parameters: {row['params']}")
 

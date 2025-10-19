@@ -3,14 +3,15 @@ Data preprocessing module for binary classification project.
 
 This module implements the preprocessing pipeline based on experimental results:
 - Missing value imputation: Global Mean for numerical, Mode for categorical
-- Outlier Detection: NoOutlier
-- Categorical encoding: TargetEncoder
+- Outlier Detection: LOF
+- Categorical encoding: OrdinalEncoding
 """
 
 import pandas as pd
 from .imputation import GlobalMeanModeImputer
-from sklearn.preprocessing import TargetEncoder
-from ..utils.config import TARGET_COL, RANDOM_SEED
+from sklearn.preprocessing import OrdinalEncoder
+from .outlier_detection import LOFDetector
+from ..utils.config import TARGET_COL
 
 
 class DataPreprocessor:
@@ -21,9 +22,12 @@ class DataPreprocessor:
         # Missing value imputers
         self.imputer = None
         self.X_processed = None
+        self.y_processed = None
 
         # Categorical encoder
-        self.cat_encoder = TargetEncoder(random_state=RANDOM_SEED)
+        self.cat_encoder = OrdinalEncoder(
+            handle_unknown="use_encoded_value", unknown_value=-1
+        )
 
         # Feature column names (will be set during fit)
         self.num_cols = None
@@ -55,16 +59,18 @@ class DataPreprocessor:
 
         X_imputed = self.imputer.transform(X)
 
+        # Outlier detector
+        self.outlier_detector = LOFDetector(
+            self.num_cols, n_neighbors=20, contamination=0.01
+        )
+
+        if self.outlier_detector is not None:
+            self.outlier_detector.fit(X_imputed)
+            self.y_processed = y
+
         if self.cat_cols:
 
-            # TargetEncoder requires y for fitting
-            if y is None:
-                raise ValueError(
-                    "TargetEncoder requires target variable 'y' for fitting. "
-                    "Please provide y when calling fit()."
-                )
-
-            self.cat_encoder.fit(X_imputed[self.cat_cols], y)
+            self.cat_encoder.fit(X_imputed[self.cat_cols])
 
         self._is_fitted = True
         return self
@@ -78,8 +84,26 @@ class DataPreprocessor:
             raise RuntimeError(
                 "Preprocessor must be fitted before transform. Call fit() first."
             )
-
+        print(f"\n   Doing Imputation: Global Mean / Mode")
         X_imputed = self.imputer.transform(X)
+
+        print(f"\n   Doing outlier detection: LOF_k20_c0.01")
+        n_before = len(X_imputed)
+        outlier_counts = []
+        if self.outlier_detector is not None:
+            inlier_mask = self.outlier_detector.get_inlier_mask()
+            X_imputed = X_imputed[inlier_mask].reset_index(drop=True)
+            self.y_processed = self.y_processed[inlier_mask].reset_index(drop=True)
+
+            n_removed = n_before - len(X_imputed)
+            outlier_counts.append(n_removed)
+        else:
+            outlier_counts.append(0)
+        print(
+            f"\n   Removed={outlier_counts[-1]} ({outlier_counts[-1]/n_before*100:.1f}%)"
+        )
+
+        print(f"\n   Doing feature encoding: OrdinalEncoder")
         if self.cat_cols:
             X_cat_encoded = self.cat_encoder.transform(X_imputed[self.cat_cols])
             X_cat_encoded = pd.DataFrame(
@@ -91,7 +115,7 @@ class DataPreprocessor:
         else:
             self.X_processed = X_imputed
 
-        return self.X_processed
+        return self.X_processed, self.y_processed
 
     def fit_transform(self, X, y=None):
         return self.fit(X, y).transform(X)

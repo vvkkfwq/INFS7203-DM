@@ -80,6 +80,33 @@ MODEL_METADATA = {
     },
 }
 
+# Model Baseline Score
+BASELINE_SCORE = {
+    "random_forest": {
+        "accuracy_mean": "0.8313",
+        "accuracy_std": "0.0071",
+        "f1_mean": "0.5664",
+        "f1_std": "0.0289",
+    },
+    "decision_tree": {
+        "accuracy_mean": "0.7720",
+        "accuracy_std": "0.0062",
+        "f1_mean": "0.5425",
+        "f1_std": "0.0144",
+    },
+    "naive_bayes": {
+        "accuracy_mean": "0.7916",
+        "accuracy_std": "0.0055",
+        "f1_mean": "0.4014",
+        "f1_std": "0.0253",
+    },
+    "knn": {
+        "accuracy_mean": "0.7188",
+        "accuracy_std": "0.0051",
+        "f1_mean": "0.2023",
+        "f1_std": "0.0094",
+    },
+}
 
 # Default model parameters
 DEFAULT_MODEL_PARAMS = {
@@ -200,6 +227,18 @@ def get_model_config(model_name: str) -> Dict[str, Any]:
         "default_params": DEFAULT_MODEL_PARAMS.get(model_name, {}),
         "metadata": MODEL_METADATA.get(model_name, {}),
     }
+
+
+def get_model_baseline_score(model_name: str) -> Dict[str, Any]:
+    """
+    Get baseline score
+    """
+    model_name = model_name.lower()
+
+    if model_name not in MODEL_REGISTRY:
+        raise ValueError(f"Unknown model: {model_name}")
+
+    return BASELINE_SCORE.get(model_name, {})
 
 
 def display_available_models() -> None:

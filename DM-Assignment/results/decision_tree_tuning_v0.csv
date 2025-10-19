@@ -1,0 +1,2 @@
+model,accuracy_mean,accuracy_std,f1_mean,f1_std,baseline_f1,f1_improvement,param_class_weight,param_criterion,param_max_depth,param_max_features,param_min_samples_leaf,param_min_samples_split,param_splitter
+Decision Tree (Tuned v0),0.734921010421893,0.011404608369664528,0.6123905671344976,0.014013440099515564,0.5425,0.0698905671344976,balanced,gini,10,,2,30,random

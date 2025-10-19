@@ -80,7 +80,7 @@ class BaselineTrainer(BaseTrainer):
         cv_scores = evaluate_model_cv(
             model=self.model,
             X=self.X_train_processed,
-            y=self.y_train,
+            y=self.y_train_processed,
         )
 
         # Store results

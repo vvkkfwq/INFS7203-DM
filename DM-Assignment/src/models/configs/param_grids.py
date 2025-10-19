@@ -10,6 +10,15 @@ from typing import Dict, Any
 
 # Decision Tree parameter grids
 DECISION_TREE_GRIDS = {
+    "v0": {
+        "criterion": ["gini", "entropy"],
+        "splitter": ["best", "random"],
+        "max_depth": [None, 10, 20, 30],
+        "min_samples_split": [10, 20, 30, 40, 50],
+        "min_samples_leaf": [2, 4, 6, 8, 10],
+        "max_features": [None, "sqrt", "log2"],
+        "class_weight": [None, "balanced"],
+    },
     "v1": {
         # Initial broad search
         "criterion": ["gini", "entropy"],
@@ -99,6 +108,9 @@ KNN_GRIDS = {
 
 # Naïve Bayes parameter grids (limited tuning options)
 NAIVE_BAYES_GRIDS = {
+    "v0": {
+        "var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5],
+    },
     "v1": {
         "var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5],
     },
@@ -203,15 +215,6 @@ BAGGING_GRIDS = {
 }
 
 
-# Additional model-specific configurations
-MODEL_SPECIFIC_CONFIGS = {
-    "random_forest": {
-        # Use class_weight='balanced' for versions that need it
-        "class_weight_versions": ["v3", "v4"],
-    },
-}
-
-
 def get_param_grid(model_name: str, version: str = "v1") -> Dict[str, Any]:
     """
     Get parameter grid for a specific model and version.
@@ -284,26 +287,6 @@ def get_available_versions(model_name: str) -> list:
         return []
 
     return list(grid_registry[model_name].keys())
-
-
-def needs_class_weight(model_name: str, version: str) -> bool:
-    """
-    Check if a specific model version should use class_weight='balanced'.
-
-    Args:
-        model_name (str): Name of the model
-        version (str): Version identifier
-
-    Returns:
-        bool: True if class_weight should be set to 'balanced'
-    """
-    if model_name not in MODEL_SPECIFIC_CONFIGS:
-        return False
-
-    config = MODEL_SPECIFIC_CONFIGS[model_name]
-    class_weight_versions = config.get("class_weight_versions", [])
-
-    return version in class_weight_versions
 
 
 def display_param_grid(model_name: str, version: str = "v1") -> None:

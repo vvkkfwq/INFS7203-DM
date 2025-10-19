@@ -91,6 +91,8 @@ def save_tuning_results(
     # Prepare summary data
     summary = {
         "model": results["model_name"],
+        "accuracy_mean": results.get("best_accuracy", None),
+        "accuracy_std": results.get("accuracy_std", None),
         "f1_mean": results["best_f1_score"],
         "f1_std": results["f1_std"],
         "baseline_f1": results.get("baseline_f1", None),
