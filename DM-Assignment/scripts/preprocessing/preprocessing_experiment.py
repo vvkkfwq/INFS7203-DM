@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.preprocessing import OrdinalEncoder, TargetEncoder
+from sklearn.preprocessing import OrdinalEncoder
 from sklearn.metrics import f1_score, accuracy_score
 
 from src.utils.config import CV_FOLDS, CV_SHUFFLE, RANDOM_SEED, TRAIN_FILE, TARGET_COL
@@ -83,7 +83,6 @@ def compare_preprocessing_pipelines():
         "OrdinalEncoder": lambda: OrdinalEncoder(
             handle_unknown="use_encoded_value", unknown_value=-1
         ),
-        "TargetEncoder": lambda: TargetEncoder(random_state=RANDOM_SEED),
     }
 
     print(f"\n4. Pipeline Configurations:")
@@ -169,11 +168,8 @@ def compare_preprocessing_pipelines():
                     # Step 3: Feature Encoding
                     encoder = encoder_factory()
 
-                    if isinstance(encoder, TargetEncoder):
-                        encoder.fit(X_train_filled[cat_cols], y_train_fold)
-                    else:
-                        # OrdinalEncoder
-                        encoder.fit(X_train_filled[cat_cols])
+                    # OrdinalEncoder
+                    encoder.fit(X_train_filled[cat_cols])
 
                     X_train_filled[cat_cols] = encoder.transform(
                         X_train_filled[cat_cols]
