@@ -20,13 +20,14 @@ def create_best_model():
 
     # Random Forest
     rf_params = {
-        "n_estimators": 100,
+        "n_estimators": 80,
         "max_depth": 10,
-        "min_samples_split": 8,
+        "min_samples_split": 2,
         "min_samples_leaf": 2,
         "max_features": None,
         "class_weight": "balanced",
         "random_state": RANDOM_SEED,
+        "n_jobs": -1,
     }
     rf = RandomForestClassifier(**rf_params)
 
@@ -38,12 +39,11 @@ def create_best_model():
     # Decision Tree
     dt_params = {
         "criterion": "gini",
-        "splitter": "random",
+        "splitter": "best",
         "max_depth": 10,
-        "min_samples_split": 30,
-        "min_samples_leaf": 2,
+        "min_samples_split": 40,
+        "min_samples_leaf": 4,
         "max_features": None,
-        "class_weight": "balanced",
         "random_state": RANDOM_SEED,
     }
 
@@ -54,7 +54,7 @@ def create_best_model():
         print(f"      - {key}: {value}")
 
     # Voting Classifier
-    voting_params = {"voting": "hard", "weights": [1, 1]}
+    voting_params = {"voting": "soft", "weights": [2, 1]}
 
     voting_clf = VotingClassifier(estimators=[("rf", rf), ("dt", dt)], **voting_params)
 
@@ -127,8 +127,8 @@ def main():
     # Step 2: Preprocess data
     print("\n[2/6] Preprocessing data...")
     preprocessor = DataPreprocessor()
-    X_train_processed, y_train_processed = preprocessor.fit_transform(X_train, y_train)
-    X_test_processed = preprocessor.test_transform(X_test)
+    X_train_processed = preprocessor.fit_transform(X_train)
+    X_test_processed = preprocessor.transform(X_test)
 
     print(f"  ✓ Preprocessing complete")
     print(
@@ -142,9 +142,9 @@ def main():
     print("\n[3/6] Creating models: RF + DT with VotingClassifier...")
     model = create_best_model()
 
-    # Step 4: Training
+    # Step 4: Traning
     print("\n[4/6] Training and evaluating...")
-    model, cv_results = train_and_evaluate(model, X_train_processed, y_train_processed)
+    model, cv_results = train_and_evaluate(model, X_train_processed, y_train)
 
     # Print results
     print(f"\n Cross-validation results:")

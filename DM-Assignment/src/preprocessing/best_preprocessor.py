@@ -127,6 +127,34 @@ class DataPreprocessor:
 
         return self.X_processed, self.y_processed
 
+    def test_transform(self, X):
+        """
+        Transform test data (no outlier removal, no y).
+        """
+        if not self._is_fitted:
+            raise RuntimeError(
+                "Preprocessor must be fitted before transform. Call fit() first."
+            )
+
+        print(f"\n   Doing Imputation: Global {self.imputationModel} / Mode")
+        X_imputed = self.imputer.transform(X)
+
+        print(f"\n   Skipping outlier detection for test data")
+
+        print(f"\n   Doing feature encoding: OrdinalEncoder\n")
+        if self.cat_cols:
+            X_cat_encoded = self.cat_encoder.transform(X_imputed[self.cat_cols])
+            X_cat_encoded = pd.DataFrame(
+                X_cat_encoded, columns=self.cat_cols, index=X_imputed.index
+            )
+            self.X_processed = pd.concat(
+                [X_imputed[self.num_cols], X_cat_encoded], axis=1
+            )
+        else:
+            self.X_processed = X_imputed
+
+        return self.X_processed
+
     def fit_transform(self, X, y=None):
         return self.fit(X, y).transform(X)
 
