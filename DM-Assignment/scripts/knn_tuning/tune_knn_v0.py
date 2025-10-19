@@ -12,7 +12,7 @@ from src.models import HyperparameterTuner
 from src.utils.io import save_tuning_results
 
 
-def tune_model(model_name, param_grid_version, baseline_score=None):
+def tune_model(model_name, param_grid_version):
 
     print("\n\n" + "=" * 70)
     print("MODEL TUNING")
@@ -22,7 +22,6 @@ def tune_model(model_name, param_grid_version, baseline_score=None):
     tuner = HyperparameterTuner(
         model_name=model_name,
         param_grid_version=param_grid_version,
-        baseline_score=baseline_score,  # Baseline F1 score for comparison
     )
 
     results = tuner.train()
@@ -38,7 +37,7 @@ def tune_model(model_name, param_grid_version, baseline_score=None):
 def main():
     """Main function to run all tuning examples."""
 
-    tuning_results = tune_model("knn", "v1")
+    tuning_results = tune_model("knn", "v0")
 
     # Summary
     print("\n\n" + "=" * 70)
@@ -46,11 +45,11 @@ def main():
     print("=" * 70)
 
     print(
+        f"  Best Accuracy: {tuning_results['best_accuracy']:.4f} ± {tuning_results['accuracy_std']:.4f}"
+    )
+    print(
         f"  Best F1: {tuning_results['best_f1_score']:.4f} ± {tuning_results['f1_std']:.4f}"
     )
-    if tuning_results["baseline_score"]:
-        print(f"   Baseline (RF v3): {tuning_results['baseline_score']:.4f}")
-        print(f"   Improvement: {tuning_results['improvement_pct']:+.2f}%")
     print(f"  Best params: {tuning_results['best_params']}")
 
 

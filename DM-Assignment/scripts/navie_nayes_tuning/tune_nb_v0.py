@@ -37,7 +37,7 @@ def tune_model(model_name, param_grid_version):
 def main():
     """Main function to run all tuning examples."""
 
-    tuning_results = tune_model("decision_tree", "v0")
+    tuning_results = tune_model("naive_bayes", "v0")
 
     # Summary
     print("\n\n" + "=" * 70)

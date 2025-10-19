@@ -51,6 +51,14 @@ DECISION_TREE_GRIDS = {
 
 # Random Forest parameter grids
 RANDOM_FOREST_GRIDS = {
+    "v0": {
+        # Focused search with balanced class weights
+        "n_estimators": [50, 80, 100, 200],
+        "max_depth": [None, 5, 10, 20],
+        "min_samples_split": [2, 4, 6, 8],
+        "min_samples_leaf": [1, 2, 4],
+        "max_features": [None],
+    },
     "v1": {
         # Initial broad search
         "n_estimators": [50, 100, 200],
@@ -89,6 +97,13 @@ RANDOM_FOREST_GRIDS = {
 
 # k-NN parameter grids
 KNN_GRIDS = {
+    "v0": {
+        # Initial search
+        "n_neighbors": [3, 5, 7, 9, 11, 13, 15, 20, 30, 40],
+        "weights": ["uniform", "distance"],
+        "algorithm": ["auto"],
+        "p": [1, 2],  # 1=manhattan, 2=euclidean
+    },
     "v1": {
         # Initial search
         "n_neighbors": [3, 5, 7, 9, 11, 13, 15],
