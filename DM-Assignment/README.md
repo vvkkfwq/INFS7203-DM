@@ -1,302 +1,206 @@
-# INFS7203 Track1 Project - Binary Classification
+# INFS4203/7203 Data Mining Project
 
-> Student: s4860387
-> Course: INFS7203 Data Mining  
-> Semester: 2, 2025
+## Project Information
 
----
+- Student ID: s4860387
+- Project Type: Data-oriented Project
+- Submission Date: 20th October 2025
+- Final Test F1 Score: 0.650
 
-## 项目概述
+## Environment Setup
 
-本项目针对二分类问题，使用课程 Week 2-8 所学的数据挖掘技术（Decision Tree, Random Forest, k-NN, Naïve Bayes），训练分类器对测试数据进行预测。
+### System Information
 
-**数据集**:
+- Operating System: macOS 26
+- Python Version: v3.10.18
+- Hardware: Processor 2.6 GHz 6-Core Intel Core i7
 
-- 训练集: 10,853 样本 × 43 特征 (25 数值 + 18 类别)
-- 测试集: 2,713 样本 × 43 特征
+### Required Packages
 
-**评估指标**: F1 Score (标签"1"为正类)
+- numpy==2.2.6
+- pandas==2.3.2
+- scikit-learn==1.7.2
 
-**目标**: 最大化测试集 F1 Score (≥0.65 满分)
-
----
-
-## 环境要求
-
-### 操作系统
-
-```
-[待填写]
-例如: Ubuntu 22.04 LTS / Windows 11 / macOS Ventura
-```
-
-### Python 版本
-
-```
-[待填写]
-例如: Python 3.10.12
-```
-
-### 依赖包
-
-```
-[待填写]
-例如:
-scikit-learn==1.3.0
-pandas==2.0.3
-numpy==1.24.3
-```
-
----
-
-## 安装步骤
-
-### 1. 创建虚拟环境 (推荐)
-
-```bash
-conda create -n dm python=3.10
-conda activate dm
-```
-
-### 2. 安装依赖
+### Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
+## Final Model Configuration
 
-## 项目结构
+### Preprocessing Methods
+
+1. **Missing Value Imputation**
+
+   - Numerical features: [median imputation]
+   - Categorical features: [mode imputation]
+
+2. **Feature Normalization**
+   #TODO:
+
+   - Method: StandardScaler
+   - Applied to: use in outlier detection on LOF method
+   - Justification: [reason for selection]
+
+3. **Outlier Detection and Handling**
+   #TODO:
+
+   - Detection method: [e.g., IQR / Z-score]
+   - Handling strategy: [removal / capping / retention]
+   - Justification: [rationale]
+
+4. **Categorical Feature Encoding**
+   - Method: OrdinalEncoder
+   - Applied to: list of categorical columns
+   - Justification:
+
+### Classification Model(s)
+
+- **Primary Model**: Random Forest / Decision Tree
+- **Model Rationale**: [why this model was chosen]
+- **Ensemble Strategy**: [if applicable, describe voting mechanism]
+  - Component models: Random Forest + Decision Tree
+  - Combination method: soft weighted voting
+
+### Hyperparameters
+
+#### **Model 1: Random Forest**
+
+- "n_estimators": 80,
+- "max_depth": 10,
+- "min_samples_split": 2,
+- "min_samples_leaf": 2,
+- "max_features": None,
+- "class_weight": "balanced",
+- "random_state": 42,
+
+#### **Model 2: Decision Tree**
+
+- "criterion": "gini",
+- "splitter": "best",
+- "max_depth": 10,
+- "min_samples_split": 40,
+- "min_samples_leaf": 4,
+- "max_features": None,
+- "random_state": RANDOM_SEED,
+
+#### **Model 3: Voting Classifier**
+
+- "voting": "soft",
+- "weights": [2, 1],
+
+### Cross-Validation Results on Training Data
+
+- Accuracy: X.XXX ± Y.YYY
+- F1 Score: 0.6505 ± 0.0164
+- CV Strategy: 5-fold cross-validation
+- Random Seed: 42
+
+## Reproduction Instructions
+
+### File Structure
 
 ```
-[待完善 - 代码开发后填写]
-
-sXXXXXXX/
-├── README.md
-├── main.py
-├── train.csv
-├── test_data.csv
-└── ...
+DM-Assignment/
+├── main.py                 # Main execution file
+├── preprocessing.py        # Preprocessing pipeline
+├── model_selection.py      # Model selection and tuning
+├── train_evaluate.py       # Training and evaluation
+├── utils.py               # Utility functions
+├── train.csv              # Training data
+├── test_data.csv          # Test data
+├── s4860387.infs4203      # Result report
+├── requirements.txt       # Package dependencies
+└── README.md              # This file
 ```
 
----
+### Step-by-Step Execution
 
-## 运行步骤
+#### Step 1: Environment Preparation
 
-### 完整流程
+```bash
+pip install -r requirements.txt
+```
+
+#### Step 2: Run Complete Pipeline
 
 ```bash
 python main.py
 ```
 
-**预计运行时间**: [待测试后填写]
+This will:
 
-### 输出文件
+1. Load and preprocess training data
+2. Perform cross-validation on training data
+3. Train final model on full training data
+4. Generate predictions on test data
+5. Create result report file: s4860387.infs4203
 
-- `sXXXXXXX.infs4203` - 提交用的结果文件
+#### Step 3: Verify Results
 
----
+The generated file `s4860387.infs4203` should contain:
 
-## 最终配置
+- Rows 1-2713: Test predictions (0 or 1)
+- Row 2714: Cross-validation accuracy, F1 score
 
-### 数据预处理
+## Model Selection and Hyperparameter Tuning
 
-**缺失值处理**:
+### Baseline Model Comparison
 
-```
-[待完善 - 实验后确定]
-```
+Four baseline models were evaluated:
 
-**特征缩放**:
+1. Decision Tree
+2. Random Forest
+3. k-Nearest Neighbors
+4. Naive Bayes
 
-```
-[待完善 - 实验后确定]
-```
+**Evaluation Results:**
 
-**类别编码**:
+| Model         | Accuracy        | F1 Score        |
+| ------------- | --------------- | --------------- |
+| Random Forest | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 |
+| Decision Tree | 0.7650 ± 0.0067 | 0.5344 ± 0.0185 |
+| Naïve Bayes   | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 |
+| k-NN          | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 |
 
-```
-[待完善 - 实验后确定]
-```
+### Preprocessing Technique Selection
 
-**其他处理**:
+Evaluated combinations:
+#TODO:
 
-```
-[待完善 - 如有需要]
-```
+- Missing value strategies: [list methods tested]
+- Normalization methods: [list methods tested]
+- Outlier handling: [list strategies tested]
+- Encoding schemes: [list methods tested]
 
----
+**Selection Process:**
 
-### 分类模型
+- Compared each technique using 5-fold CV on training data
+- Selected configuration that maximized F1 score
 
-**主模型**:
+### Hyperparameter Tuning Process
 
-```
-[待完善 - 调优后确定]
-例如: Random Forest / Decision Tree / k-NN / Ensemble
-```
+#TODO:
+**Search Strategy:** [Grid Search / Random Search / Manual Tuning]
 
-**模型参数**:
+**Parameter Ranges Explored:**
 
-```
-[待完善 - 调优后填写]
-```
+#TODO:
 
-**集成策略** (如使用):
+- Model 1:
+  - Parameter 1: [min, max] or [list of values]
+  - Parameter 2: [min, max] or [list of values]
+  - Rationale: [why these ranges]
 
-```
-[待完善 - 如使用集成方法]
-```
+**Tuning Results:**
 
-**交叉验证配置**:
+- Best parameters: [final parameter set]
+- Performance improvement: [before vs after tuning]
 
-```
-折数: 5
-策略: StratifiedKFold
-随机种子: 42
-```
+### Ensemble Exploration [if applicable]
 
----
-
-## 方法选择理由
-
-### 预处理方案选择
-
-**缺失值处理**:
-
-```
-[待填写 - 说明为什么选择这个方法，对比了哪些方案]
-```
-
-**特征缩放**:
-
-```
-[待填写 - 说明选择理由]
-```
-
-**类别编码**:
-
-```
-[待填写 - 说明选择理由]
-```
-
----
-
-### 模型选择理由
-
-```
-[待填写 - 详细说明为什么选择这个模型]
-
-包括:
-1. 在基线测试中的表现
-2. 模型的优势特点
-3. 适合数据集的原因
-4. 与其他模型的对比
-```
-
----
-
-### 超参数调优过程
-
-```
-[待填写 - 说明调优的过程和发现]
-
-包括:
-1. 搜索的参数空间
-2. 使用的搜索方法 (GridSearch/RandomSearch)
-3. 关键参数的影响
-4. 最终参数的选择依据
-```
-
----
-
-### 集成策略理由 (如使用)
-
-```
-[待填写 - 如使用集成方法，说明理由]
-
-包括:
-1. 为什么需要集成
-2. 选择哪些模型组合
-3. 集成方法的选择 (Voting/Stacking等)
-4. 性能提升情况
-```
-
----
-
-## 实验结果
-
-### 基线模型对比
-
-| Model         | Accuracy        | F1 Score        | Notes                                |
-| ------------- | --------------- | --------------- | ------------------------------------ |
-| Random Forest | 0.8331 ± 0.0069 | 0.5742 ± 0.0226 | Best baseline, high tuning potential |
-| Decision Tree | 0.7650 ± 0.0067 | 0.5344 ± 0.0185 | Good baseline, ready for tuning      |
-| Naïve Bayes   | 0.7915 ± 0.0038 | 0.3997 ± 0.0233 | Moderate performance                 |
-| k-NN          | 0.7159 ± 0.0068 | 0.2003 ± 0.0075 | Poor, needs StandardScaler           |
-
-### 最终模型性能 (交叉验证)
-
-```
-模型: [待填写]
-Accuracy: [待填写] ± [标准差]
-F1 Score: [待填写] ± [标准差]
-Precision: [待填写] ± [标准差]
-Recall: [待填写] ± [标准差]
-```
-
----
-
-## 可复现性说明
-
-### 随机种子
-
-所有随机操作使用固定种子: `RANDOM_SEED = 42`
-
-### 数据来源
-
-- 训练集: train.csv (课程提供)
-- 测试集: test_data.csv (课程提供)
-
-### 环境信息
-
-详见"环境要求"部分
-
----
-
-## AI 工具使用声明
-
-```
-[如使用AI工具辅助，在此说明]
-
-例如:
-- 使用Claude/ChatGPT辅助代码调试
-- 使用AI生成可视化代码
-- 所有核心算法和决策基于独立实验
-```
-
----
-
-## 注意事项
-
-### 技术合规
-
-✅ 仅使用 Week 2-8 课程技术  
-✅ 固定随机种子确保可复现  
-✅ 代码为.py 格式 (非.ipynb)
-
-### 文件检查
-
-✅ train.csv 和 test_data.csv 已包含  
-✅ 生成的 sXXXXXXX.infs4203 格式正确  
-✅ requirements.txt 完整
-
----
-
-## 联系方式
-
-**课程邮箱**: infs4203@eecs.uq.edu.au
-
----
-
-**最后更新**: [填写日期]
+- Combinations tested: [list ensemble combinations]
+- Voting mechanisms: [majority / weighted]
+- Final ensemble composition: [selected combination]
+- Justification: [why this ensemble]

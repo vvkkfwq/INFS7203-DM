@@ -53,8 +53,9 @@ DECISION_TREE_GRIDS = {
 RANDOM_FOREST_GRIDS = {
     "v0": {
         # Focused search with balanced class weights
-        "n_estimators": [50, 80, 100, 200],
-        "max_depth": [None, 5, 10, 20],
+        "class_weight": ["balanced"],
+        "n_estimators": [50, 80, 100],
+        "max_depth": [None, 10, 20],
         "min_samples_split": [2, 4, 6, 8],
         "min_samples_leaf": [1, 2, 4],
         "max_features": [None],
@@ -135,6 +136,13 @@ NAIVE_BAYES_GRIDS = {
 # Voting Classifier parameter grids
 # Note: estimators must be provided separately
 VOTING_GRIDS = {
+    "v0": {
+        # Voting strategy
+        "voting": ["soft", "hard"],
+        # Weight combinations for base estimators
+        # Format: weights for [RF, DT]
+        "weights": [[1, 1], [1, 2], [2, 1], [3, 1], [3, 2]],
+    },
     "v1": {
         # Voting strategy
         "voting": ["soft", "hard"],
@@ -251,8 +259,6 @@ def get_available_versions(model_name: str) -> list:
         "knn": KNN_GRIDS,
         "naive_bayes": NAIVE_BAYES_GRIDS,
         "voting": VOTING_GRIDS,
-        "adaboost": ADABOOST_GRIDS,
-        "bagging": BAGGING_GRIDS,
     }
 
     if model_name not in grid_registry:

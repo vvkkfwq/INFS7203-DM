@@ -11,5 +11,7 @@ This module provides a modular training framework including:
 from .base_trainer import BaseTrainer
 from .baseline_trainer import BaselineTrainer
 from .hyperparameter_tuner import HyperparameterTuner
+from .voting_trainer import VotingTuner
 
-__all__ = ["BaseTrainer", "BaselineTrainer", "HyperparameterTuner"]
+
+__all__ = ["BaseTrainer", "BaselineTrainer", "HyperparameterTuner", "VotingTuner"]

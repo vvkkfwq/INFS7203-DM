@@ -1,0 +1,2 @@
+model,accuracy_mean,accuracy_std,f1_mean,f1_std,baseline_f1,f1_improvement,param_voting,param_weights
+Voting Classifier (Tuned v3),0.8150715654830007,0.011746411452004026,0.6504736674023724,0.01644597212671796,,,soft,"[2, 1]"
