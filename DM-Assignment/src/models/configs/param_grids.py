@@ -189,47 +189,6 @@ VOTING_GRIDS = {
 }
 
 
-# AdaBoost parameter grids
-ADABOOST_GRIDS = {
-    "v1": {
-        # Initial broad search
-        "n_estimators": [50, 100, 200],
-        "learning_rate": [0.01, 0.1, 0.5, 1.0],
-    },
-    "v2": {
-        # Refined search
-        "n_estimators": [100, 150, 200, 250],
-        "learning_rate": [0.1, 0.3, 0.5, 0.7],
-    },
-    "v3": {
-        # Fine-tuning
-        "n_estimators": [150, 200, 250],
-        "learning_rate": [0.3, 0.5, 0.7],
-    },
-}
-
-
-# Bagging parameter grids
-BAGGING_GRIDS = {
-    "v1": {
-        # Initial broad search
-        "n_estimators": [10, 50, 100],
-        "max_samples": [0.5, 0.7, 1.0],
-        "max_features": [0.5, 0.7, 1.0],
-        "bootstrap": [True, False],
-        "bootstrap_features": [False, True],
-    },
-    "v2": {
-        # Refined search
-        "n_estimators": [50, 100, 150],
-        "max_samples": [0.7, 0.8, 0.9, 1.0],
-        "max_features": [0.8, 0.9, 1.0],
-        "bootstrap": [True],
-        "bootstrap_features": [False],
-    },
-}
-
-
 def get_param_grid(model_name: str, version: str = "v1") -> Dict[str, Any]:
     """
     Get parameter grid for a specific model and version.
@@ -254,8 +213,6 @@ def get_param_grid(model_name: str, version: str = "v1") -> Dict[str, Any]:
         "knn": KNN_GRIDS,
         "naive_bayes": NAIVE_BAYES_GRIDS,
         "voting": VOTING_GRIDS,
-        "adaboost": ADABOOST_GRIDS,
-        "bagging": BAGGING_GRIDS,
     }
 
     if model_name not in grid_registry:
