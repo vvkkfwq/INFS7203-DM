@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 from pathlib import Path
 
-from src.preprocessing.data_preprocessor import DataPreprocessor, load_data
+from src.preprocessing.best_preprocessor import DataPreprocessor, load_data
 from src.utils.config import TRAIN_FILE
 from src.utils.metrics import display_training_progress
 
@@ -102,7 +102,9 @@ class BaseTrainer(ABC):
         # Create new preprocessor if not provided
         if self.preprocessor is None:
             self.preprocessor = DataPreprocessor()
-            self.X_train_processed = self.preprocessor.fit_transform(self.X_train)
+            self.X_train_processed = self.preprocessor.fit_transform(
+                self.X_train, self.y_train
+            )
         else:
             # Use provided fitted preprocessor
             self.X_train_processed = self.preprocessor.transform(self.X_train)

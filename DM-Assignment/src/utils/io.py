@@ -30,9 +30,8 @@ def ensure_dir(directory: Path) -> Path:
 
 
 def save_baseline_results(
-    results: Dict[str, Any],
+    all_results: list[Dict[str, Any]],
     output_file: str = "results/baseline_results.csv",
-    append: bool = False,
 ) -> None:
     """
     Save baseline model results to CSV.
@@ -50,22 +49,19 @@ def save_baseline_results(
     ensure_dir(output_path.parent)
 
     # Prepare summary data
-    summary = {
-        "model": results["model_name"],
-        "accuracy_mean": results["cv_scores"]["accuracy_mean"],
-        "accuracy_std": results["cv_scores"]["accuracy_std"],
-        "f1_mean": results["cv_scores"]["f1_mean"],
-        "f1_std": results["cv_scores"]["f1_std"],
-    }
+    list = []
+    for results in all_results:
+        summary = {
+            "model": results["model_name"],
+            "accuracy_mean": results["cv_scores"]["accuracy_mean"],
+            "accuracy_std": results["cv_scores"]["accuracy_std"],
+            "f1_mean": results["cv_scores"]["f1_mean"],
+            "f1_std": results["cv_scores"]["f1_std"],
+        }
+        list.append(summary)
 
     # Convert to DataFrame
-    df = pd.DataFrame([summary])
-
-    # Save or append
-    if append and output_path.exists():
-        existing_df = pd.read_csv(output_path)
-        df = pd.concat([existing_df, df], ignore_index=True)
-
+    df = pd.DataFrame(list).sort_values("f1_mean", ascending=False)
     df.to_csv(output_path, index=False)
     print(f"\n✓ Results saved to: {output_path}")
 
@@ -157,7 +153,9 @@ def load_model(model_file: str) -> Dict[str, Any]:
     return model_data
 
 
-def load_baseline_results(results_file: str = "results/baseline_results.csv") -> pd.DataFrame:
+def load_baseline_results(
+    results_file: str = "results/baseline_results.csv",
+) -> pd.DataFrame:
     """
     Load baseline results from CSV.
 

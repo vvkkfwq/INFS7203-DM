@@ -30,9 +30,6 @@ def main():
         trainer = BaselineTrainer(model_name=model_name)
         results = trainer.train()
 
-        # Save results
-        save_baseline_results(results, output_file=f"results/baseline_{model_name}.csv")
-
         all_results.append(results)
 
     # Summary
@@ -47,6 +44,9 @@ def main():
         print(
             f"  Accuracy: {cv_scores['accuracy_mean']:.4f} ± {cv_scores['accuracy_std']:.4f}"
         )
+
+    # Save results
+    save_baseline_results(all_results)
 
 
 if __name__ == "__main__":

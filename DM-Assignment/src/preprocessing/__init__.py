@@ -19,7 +19,7 @@ from .outlier_detection import (
     get_outlier_detector,
 )
 
-from .data_preprocessor import DataPreprocessor, load_data
+from .best_preprocessor import DataPreprocessor, load_data
 
 __all__ = [
     "BasePreprocessor",

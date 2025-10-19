@@ -2,14 +2,15 @@
 Data preprocessing module for binary classification project.
 
 This module implements the preprocessing pipeline based on experimental results:
-- Missing value imputation: Global Median for numerical, Mode for categorical
-- Categorical encoding: OrdinalEncoder
+- Missing value imputation: Global Mean for numerical, Mode for categorical
+- Outlier Detection: NoOutlier
+- Categorical encoding: TargetEncoder
 """
 
 import pandas as pd
-from .imputation import GlobalMedianModeImputer
-from sklearn.preprocessing import OrdinalEncoder
-from ..utils.config import UNKNOWN_VALUE, TARGET_COL
+from .imputation import GlobalMeanModeImputer
+from sklearn.preprocessing import TargetEncoder
+from ..utils.config import TARGET_COL, RANDOM_SEED
 
 
 class DataPreprocessor:
@@ -22,9 +23,7 @@ class DataPreprocessor:
         self.X_processed = None
 
         # Categorical encoder
-        self.cat_encoder = OrdinalEncoder(
-            handle_unknown="use_encoded_value", unknown_value=UNKNOWN_VALUE
-        )
+        self.cat_encoder = TargetEncoder(random_state=RANDOM_SEED)
 
         # Feature column names (will be set during fit)
         self.num_cols = None
@@ -51,12 +50,21 @@ class DataPreprocessor:
         self.num_cols, self.cat_cols = self._identify_feature_types(X)
         self.feature_cols = self.num_cols + self.cat_cols
 
-        self.imputer = GlobalMedianModeImputer(self.num_cols, self.cat_cols)
+        self.imputer = GlobalMeanModeImputer(self.num_cols, self.cat_cols)
         self.imputer.fit(X)
 
         X_imputed = self.imputer.transform(X)
+
         if self.cat_cols:
-            self.cat_encoder.fit(X_imputed[self.cat_cols])
+
+            # TargetEncoder requires y for fitting
+            if y is None:
+                raise ValueError(
+                    "TargetEncoder requires target variable 'y' for fitting. "
+                    "Please provide y when calling fit()."
+                )
+
+            self.cat_encoder.fit(X_imputed[self.cat_cols], y)
 
         self._is_fitted = True
         return self
@@ -85,8 +93,8 @@ class DataPreprocessor:
 
         return self.X_processed
 
-    def fit_transform(self, X):
-        return self.fit(X).transform(X)
+    def fit_transform(self, X, y=None):
+        return self.fit(X, y).transform(X)
 
     def verify_preprocessing(X, description="Preprocessed Data"):
         """
