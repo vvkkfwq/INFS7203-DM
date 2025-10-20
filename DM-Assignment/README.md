@@ -93,7 +93,7 @@ pip install -r requirements.txt
 
 - Accuracy: 0.795 ± 0.009
 - F1 Score: 0.6500 ± 0.0120
-- CV Strategy: 5-fold cross-validation
+- CV Strategy: 5-fold StratifiedKFold cross-validation
 - Random Seed: 42
 
 ## Reproduction Instructions
@@ -202,7 +202,7 @@ Evaluated combinations:
 **Selection Process:**
 
 - Compared each technique using 5-fold CV on training data
-- Selected configuration that maximized F1 score [reference](logs/preprocessing_experiment.log)
+- Selected configuration that maximized F1 score from the result [logs/preprocessing_experiment.log)](logs/preprocessing_experiment.log)
 
 ### Hyperparameter Tuning Process
 
@@ -221,6 +221,12 @@ Evaluated combinations:
 - `min_samples_leaf`: [2, 4, 6, 8, 10]
 - `max_features`: [None, "sqrt", "log2"]
 - `class_weight`: [None, "balanced"]
+
+**Rationale:**
+
+- Started with balanced class weights due to imbalanced dataset
+- Focused on controlling tree depth and minimum samples to reduce overfitting
+- Explored `splitter="random"` for additional regularization
 
 - **Best Parameters:**
 
@@ -251,6 +257,12 @@ Evaluated combinations:
 - `max_features`: [None]
 - `class_weight`: ["balanced"]
 
+**Rationale:**
+
+- Started with balanced class weights due to imbalanced dataset
+- Focused on tree complexity (`max_depth`, `min_samples_split`) to prevent overfitting
+- Limited `n_estimators` range for computational efficiency
+
 **Tuning Results:**
 
 - **Best Parameters:**
@@ -276,6 +288,11 @@ Evaluated combinations:
 
 - `var_smoothing`: [1e-9, 1e-8, 1e-7, 1e-6, 1e-5]
 
+**Rationale:**
+
+- Gaussian Naïve Bayes has limited hyperparameters
+- `var_smoothing` adds portion of largest variance to all features for numerical stability
+
 **Tuning Results:**
 
 - **Best Parameters:**
@@ -299,6 +316,12 @@ Evaluated combinations:
 - `algorithm`: ["auto"]
 - `p`: [1, 2] # Manhattan vs Euclidean distance
 
+**Rationale:**
+
+- Explored wide range of k values to find optimal neighborhood size
+- Tested distance weighting to give closer neighbors more influence
+- Compared Manhattan (p=1) and Euclidean (p=2) distance metrics
+
 **Tuning Results:**
 
 - **Best Parameters:**
@@ -316,7 +339,7 @@ Evaluated combinations:
   - F1 Score: 0.2023 → 0.3045 (+0.1022)
 - **Training Script:** [`scripts/knn_tuning/tune_knn_v0.py`](scripts/knn_tuning/tune_knn_v0.py)
 
-#### Ensemble Exploration [if applicable]
+#### Ensemble Exploration
 
 - Combinations tested: [Random Forest / Decision Tree / Navie Bayes]
 - Voting mechanisms: [hard or soft / weighted]
