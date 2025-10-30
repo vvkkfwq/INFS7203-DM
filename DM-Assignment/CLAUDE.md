@@ -1,176 +1,233 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-INFS7203 Data Mining Track 1 - Binary Classification Project
+INFS7203 Data Mining Binary Classification Project - Academic coursework with strict technical constraints.
 
-- **Task**: Binary classification (0/1) using Week 2-8 techniques, maximize F1 Score
-- **Deadline**: 2025-10-20 13:00 Brisbane Time
-- **Student ID**: s4860387
+- **Task**: Binary classification (0/1), maximize F1 Score
 - **Dataset**: 10,853 train samples, 2,713 test samples, 43 features (25 numerical + 18 categorical)
-- **Performance Goal**: F1 Score ≥ 0.65 for full marks
+- **Target**: F1 Score ≥ 0.65 for full marks (**ACHIEVED**: 0.6505 with Voting Classifier)
+- **Technical Constraints**: ONLY allowed Week 2-8 techniques (Decision Tree, Random Forest, k-NN, Naïve Bayes). NO XGBoost, Neural Networks, LightGBM, CatBoost.
 
-## Technical Constraints
+## Architecture Pattern
 
-**ALLOWED**: Outlier detection, Normalization, Imputation, Categorical encoding, Decision Tree, Random Forest, k-NN, Naïve Bayes
-**PROHIBITED**: XGBoost, LightGBM, CatBoost, Neural Networks, Deep Learning
-
-## Directory Structure
+This codebase follows a **Template Method + Factory** pattern:
 
 ```
-DM-Assignment/
-├── data/                    # Training and test datasets
-├── src/                     # Production code (modularized framework)
-│   ├── models/              # Training framework (BaselineTrainer, HyperparameterTuner)
-│   │   └── configs/         # Model configs and parameter grids
-│   ├── preprocessing/       # DataPreprocessor and transformers
-│   └── utils/               # Metrics, I/O, config
-├── examples/                # Usage examples (quick_start.py, tune_model.py)
-├── scripts/                 # Experimental scripts (baseline/, *_tuning/)
-├── notebooks/               # EDA and experiments (*.ipynb)
-├── results/                 # Model outputs (*.csv)
-├── logs/                    # Training logs
-└── docs/                    # Requirements and task checklist
+BaseTrainer (abstract)          # Template method for train() workflow
+├── BaselineTrainer            # Default parameters + CV evaluation
+├── HyperparameterTuner        # GridSearchCV + parameter optimization
+└── VotingTuner                # Ensemble voting with custom param grids
+
+ModelFactory                   # Creates sklearn models with configs
+├── model_configs.py          # Model registry + metadata + baseline scores
+└── param_grids.py            # Versioned parameter grids (v0, v1, v2...)
+
+DataPreprocessor              # Stateful preprocessing pipeline
+├── fit()                     # Learn imputation/encoding/outliers from train
+├── transform()               # Apply to train (with outlier removal)
+└── test_transform()          # Apply to test (NO outlier removal)
 ```
 
-**Key Modules**:
-
-- `src/models/{baseline_trainer,hyperparameter_tuner}.py`: Unified training interface
-- `src/models/configs/{model_configs,param_grids}.py`: Model registry and parameter grids
-- `src/preprocessing/data_preprocessor.py`: Data preprocessing pipeline
-- `src/utils/{metrics,io,config}.py`: Shared utilities
-
-## File Placement Guidelines
-
-**Follow these rules for organizing new code:**
-
-| Code Type                                      | Location                            | Examples                                             |
-| ---------------------------------------------- | ----------------------------------- | ---------------------------------------------------- |
-| **Production modules** (reusable)              | `src/`                              | BaselineTrainer, DataPreprocessor, utility functions |
-| **Exploratory tuning experiments** (versioned) | `scripts/model_name_tuning/`        | tune_rf_v1.py, tune_dt_v2.py                         |
-| **Baseline comparisons**                       | `scripts/baseline/`                 | train_baseline.py, compare_baseline_models.py        |
-| **Interactive exploration** (temporary)        | `notebooks/`                        | EDA, quick prototyping (\*.ipynb)                    |
-| **Parameter grids** (centralized)              | `src/models/configs/param_grids.py` | All model parameter grids                            |
-| **Usage demonstrations**                       | `examples/`                         | quick_start.py (show how to use src modules)         |
-
-**Key Principles**:
-
-- ✅ **Experiments** → `scripts/model_name_tuning/` (keep versioned history: v1, v2, v3...)
-- ✅ **Reusable code** → `src/` (modularized, tested, production-ready)
-- ✅ **Parameter configs** → `src/models/configs/param_grids.py` (centralized management)
-- ✅ **Quick tests** → `notebooks/` (interactive exploration, then migrate to scripts/)
-- ❌ **Don't mix**: Keep experiments (scripts/) separate from production code (src/)
-
-## Quick Start (Modularized Framework)
-
-```python
-# Train baseline model (2 lines)
-from src.models import BaselineTrainer
-results = BaselineTrainer(model_name="random_forest").train()
-
-# Hyperparameter tuning (2 lines)
-from src.models import HyperparameterTuner
-results = HyperparameterTuner(model_name="random_forest", param_grid_version="v3").train()
-
-# See examples/README.md for detailed usage
-```
-
-## Model Performance (Best Results)
-
-| Rank | Model               | F1 Score (Mean ± Std) | Status            | Key Params                                       |
-| ---- | ------------------- | --------------------- | ----------------- | ------------------------------------------------ |
-| 🥇   | **Voting v3**       | **0.6505** ± 0.0164   | **🎯 BEST MODEL** | soft, weights=[2,1] (RF+DT without class_weight) |
-| 🥈   | Random Forest v3    | 0.6419 ± 0.0119       | **TARGET MET**    | n_estimators=200, max_depth=20                   |
-| 🥉   | Random Forest v4    | 0.6415 ± 0.0113       | **TARGET MET**    | n_estimators=300, max_depth=25                   |
-| 4    | Voting v2           | 0.6401 ± 0.0073       | Target Met        | soft, weights=[2,1] (RF+DT)                      |
-| 5    | Voting v1           | 0.6237 ± 0.0202       | Below Target      | soft, weights=[3,2,1] (RF+DT+NB)                 |
-| 6    | AdaBoost v1         | 0.6147 ± 0.0127       | Below Target      | n_estimators=200, learning_rate=1.0              |
-| 7    | Decision Tree v3    | 0.6092 ± 0.0143       | Close             | max_depth=10, min_samples_split=5                |
-| 8    | k-NN v1 (no scaler) | 0.3027 ± 0.0104       | Poor              | n_neighbors=3, weights=uniform, p=1              |
-
-**Baseline Comparison** (Baseline → Best Tuned):
-
-- **Voting Ensemble**: 0.6419 → **0.6505** (+1.3% improvement) ✨ **NEW BEST**
-- Random Forest: 0.5742 → 0.6419 (+11.8% improvement)
-- Decision Tree: 0.5344 → 0.6092 (+14.0% improvement)
-- AdaBoost: N/A → 0.6147 (new model tested)
-- k-NN: 0.2003 → 0.3027 (still poor without StandardScaler)
-- Naïve Bayes: 0.3997 (baseline only)
+**Key Design Principles**:
+1. **Separation of Concerns**: Production code (`src/`) vs experimental scripts (`scripts/`)
+2. **Versioned Experiments**: Parameter grids use v0, v1, v2... for iterative tuning
+3. **Reproducibility**: RANDOM_SEED=42 everywhere, StratifiedKFold for class balance
+4. **Preprocessing State Management**: Preprocessor fits once, transforms train/test differently
 
 ## Development Commands
 
 ```bash
 # Environment: Python 3.10, conda env `dm`
+# Install dependencies
+pip install -r requirements.txt
 
-# Quick examples
-python examples/quick_start.py        # Demonstrate framework usage
-python examples/tune_model.py         # Tuning examples
+# Main pipeline (generate submission file)
+python src/main.py  # Outputs: s4860387.infs4203
 
-# Legacy scripts (completed experiments)
+# Quick API examples
+python examples/quick_start.py    # BaselineTrainer + HyperparameterTuner usage
+python examples/tune_model.py     # Custom parameter grid example
+
+# Experimental scripts (historical tuning runs)
 python scripts/baseline/train_baseline.py
+python scripts/ensemble_tuning/tune_voting_v3.py  # Best model (F1=0.6505)
 python scripts/random_forest_tuning/tune_rf_v3.py
 python scripts/decision_tree_tuning/tune_dt_v3.py
-
-# Main pipeline (to be implemented)
-python main.py  # Generate s4860387.infs4203
 ```
+
+## File Organization Rules
+
+| Code Type | Location | When to Use |
+|-----------|----------|-------------|
+| Reusable modules | `src/` | Production code, shared utilities, trainers |
+| Versioned experiments | `scripts/{model}_tuning/` | Hyperparameter tuning iterations (v1, v2...) |
+| Parameter grids | `src/models/configs/param_grids.py` | ALL model parameter grids (centralized) |
+| Exploratory analysis | `notebooks/` | EDA, quick prototyping (migrate to scripts/ later) |
+
+**Critical Rule**: DO NOT add parameters to experimental scripts. ALL parameter grids MUST go in `src/models/configs/param_grids.py` for version control and reusability.
 
 ## Key Implementation Details
 
-**Preprocessing**:
+**Preprocessing Pipeline** (`DataPreprocessor`):
+- Imputation: GlobalMeanMode (numerical mean, categorical mode)
+- Outlier Detection: LOF (LocalOutlierFactor, k=20, contamination=0.01) - removes ~1% train samples
+- Encoding: OrdinalEncoder (handles unknown categories with -1)
+- Scaling: NONE (tree-based models don't need it; k-NN requires separate handling)
 
-- Imputation: SimpleImputer (median for numerical, mode for categorical)
-- Encoding: OrdinalEncoder for categorical features
-- Scaling: StandardScaler for k-NN only
+**Critical Preprocessing Difference**:
+```python
+# Training: Fit + Transform (with outlier removal)
+preprocessor.fit_transform(X_train, y_train)  # Removes ~109 outliers
 
-**Cross-Validation**:
+# Test: Transform only (NO outlier removal, NO y)
+preprocessor.test_transform(X_test)  # Keep all test samples
+```
 
-- StratifiedKFold (5 folds) to maintain class balance
-- RANDOM_SEED = 42 for all operations
+**Cross-Validation Strategy**:
+- StratifiedKFold (5 folds, shuffle=True, random_state=42)
+- Handles 75:25 class imbalance (Class 0: 75%, Class 1: 25%)
+- Scoring: PRIMARY_METRIC='f1', SECONDARY_METRIC='accuracy'
 
-**Missing Values**:
+**Model Factory Usage**:
+```python
+from src.models.configs import ModelFactory, get_model_config, get_param_grid
 
-- 1,085 samples (10%) have missing values across ALL 43 features
+# Create model
+model = ModelFactory.create_model("random_forest", params={...})
 
-**Class Imbalance**:
+# Get baseline score for comparison
+baseline = get_model_baseline_score("random_forest")  # {'f1_mean': '0.5664', ...}
 
-- 75% class 0, 25% class 1 (handled via class_weight='balanced' in best models)
+# Get parameter grid for tuning
+param_grid = get_param_grid("random_forest", version="v3")
+```
 
-## Submission Requirements
+## Best Model Configuration
+
+**Current Best: Voting Classifier v3 (F1=0.6505 ± 0.0164)**
+```python
+# Components
+RandomForestClassifier(
+    n_estimators=100, max_depth=10, min_samples_split=8,
+    min_samples_leaf=2, class_weight='balanced', random_state=42
+)
+DecisionTreeClassifier(
+    criterion='gini', splitter='random', max_depth=10,
+    min_samples_split=30, min_samples_leaf=2,
+    class_weight='balanced', random_state=42
+)
+
+# Ensemble
+VotingClassifier(
+    estimators=[('rf', rf), ('dt', dt)],
+    voting='soft',    # Uses predict_proba
+    weights=[2, 1]    # Favor RF over DT
+)
+```
+
+**Model Performance Ranking**:
+1. 🥇 Voting v3: 0.6505 (soft, [2,1], no class_weight on voting)
+2. 🥈 RF v3: 0.6419 (n_estimators=200, max_depth=20)
+3. 🥉 RF v4: 0.6415 (n_estimators=300, max_depth=25)
+4. Voting v2: 0.6401 (soft, [2,1])
+5. DT v3: 0.6092 (max_depth=10)
+6. k-NN v1: 0.3027 (poor, needs StandardScaler)
+
+## Common Workflows
+
+### 1. Train a Baseline Model
+```python
+from src.models import BaselineTrainer
+
+trainer = BaselineTrainer(model_name="random_forest")
+results = trainer.train()  # Returns CV scores + trained model
+```
+
+### 2. Hyperparameter Tuning
+```python
+from src.models import HyperparameterTuner
+
+tuner = HyperparameterTuner(
+    model_name="random_forest",
+    param_grid_version="v3"  # Uses predefined grid from param_grids.py
+)
+results = tuner.train()  # GridSearchCV + best params
+```
+
+### 3. Custom Parameter Grid
+```python
+tuner = HyperparameterTuner(
+    model_name="random_forest",
+    custom_param_grid={
+        "n_estimators": [100, 200],
+        "max_depth": [10, 20]
+    }
+)
+```
+
+### 4. Voting Ensemble Tuning
+```python
+from src.models import VotingTuner
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+estimators = [
+    ("rf", RandomForestClassifier(**rf_params)),
+    ("dt", DecisionTreeClassifier(**dt_params))
+]
+
+tuner = VotingTuner(
+    estimators=estimators,
+    param_grid_version="v3"
+)
+results = tuner.train()
+```
+
+## Submission Format
 
 **Result File** (`s4860387.infs4203`):
-
-- 2,714 lines: first 2,713 lines = test predictions (0, or 1,), last line = CV scores (accuracy,f1,)
+```
+0,         # Line 1-2713: predictions (0, or 1,)
+1,
+...
+1,
+0.795, 0.650,  # Line 2714: accuracy,f1, (3 decimals)
+```
 
 **Code Package** (`s4860387.zip`):
+- Must contain: main.py, all .py files (NO .ipynb), data/, README.md, requirements.txt
+- Must be runnable: `python src/main.py` should reproduce results
 
-- main.py entry point, all .py files (NO .ipynb), data files, README.md (Chinese), requirements.txt
+## Data Characteristics
 
-## Current Status
+**Missing Values**: 1,085 samples (10%) have missing values across ALL 43 features (not just a few).
 
-**Completed**:
+**Class Imbalance**: 75:25 (Class 0:Class 1) - use `class_weight='balanced'` in tree models for best results.
 
-- ✅ EDA and preprocessing experiments
-- ✅ Modularized training framework (BaselineTrainer, HyperparameterTuner)
-- ✅ Baseline training (all 4 basic models: RF, DT, k-NN, NB)
-- ✅ Hyperparameter tuning (RF v1-v4, DT v1-v3, k-NN v1)
-- ✅ Ensemble model tuning (Voting v1-v3, AdaBoost v1)
-- ✅ **Target F1 ≥ 0.65 achieved and exceeded** (Voting v3: **0.6505**)
-- ✅ **New best model identified**: Voting Classifier (soft voting, RF+DT with weights [2,1])
+**Feature Types**:
+- 25 numerical features (prefix: `Num_`)
+- 18 categorical features (prefix: `Nom_`)
 
-**Tuning Summary**:
+**Outliers**: LOF detector identifies ~109 outliers (1%) removed during training.
 
-- Random Forest: 4 versions tested → v3 best (0.6419)
-- Decision Tree: 3 versions tested → v3 best (0.6092)
-- Voting Ensemble: 3 versions tested → v3 best (0.6505) 🎯
-- AdaBoost: 1 version tested (0.6147, below target)
-- k-NN: 1 version tested (0.3027, needs StandardScaler improvement)
+## Critical Gotchas
 
-**Remaining** (see `docs/Task_Checklist.md` for details):
+1. **Preprocessor State**: Always call `fit_transform()` on train, then `test_transform()` (NOT `transform()`) on test.
+2. **Random Seeds**: Set `RANDOM_SEED=42` in model, CV, and numpy for reproducibility.
+3. **Parameter Grids**: Add to `param_grids.py`, NOT in individual scripts.
+4. **Class Weight**: Best models use `class_weight='balanced'` due to 75:25 imbalance.
+5. **Voting Weights**: Soft voting with `weights=[2,1]` (favor RF) beats equal weights.
 
-- ⏳ Implement main.py using best model (Voting v3)
-- ⏳ Generate submission files (s4860387.infs4203, s4860387.zip)
-- ⏳ Finalize README.md (Chinese) and requirements.txt
-- 🔄 Optional: Try k-NN v2 with StandardScaler, explore Bagging/Stacking ensembles
+## Future Exploration Ideas
+
+**Potential Improvements** (if time allows):
+- k-NN with StandardScaler (current F1=0.3027 → expected ~0.50+)
+- Stacking ensemble (meta-learner on top of RF+DT)
+- Feature engineering (polynomial features, interaction terms)
+- Alternative imputation (KNNImputer, IterativeImputer)
+- OneHotEncoder vs OrdinalEncoder comparison
+
+**Note**: Current model (F1=0.6505) already exceeds target (0.65), so focus on submission preparation.
