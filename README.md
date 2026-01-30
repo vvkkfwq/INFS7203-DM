@@ -8,6 +8,20 @@ This repository contains coursework and assignments for INFS7203 Data Mining cou
 - **Institution:** University of Queensland
 - **Student:** vvkkfwq
 
+## 🎯 For Interview & Job Preparation
+
+**New!** Comprehensive documentation for recalling assignment content and interview preparation:
+
+- 📖 **[ASSIGNMENT_SUMMARY.md](./ASSIGNMENT_SUMMARY.md)** - Complete project overview with bilingual content (中英文)
+- 💼 **[INTERVIEW_GUIDE.md](./INTERVIEW_GUIDE.md)** - Detailed interview preparation guide with Q&A templates
+- 📋 **[TECHNICAL_REFERENCE.md](./TECHNICAL_REFERENCE.md)** - Quick reference card for technical details
+
+These documents help you:
+- ✅ Quickly recall what you've accomplished in this course
+- ✅ Prepare for technical interviews with ready-to-use talking points
+- ✅ Reference key metrics and technical decisions
+- ✅ Present your work confidently to potential employers
+
 ## 📁 Repository Structure
 
 ```
