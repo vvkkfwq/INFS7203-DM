@@ -12,9 +12,16 @@ This repository contains coursework and assignments for INFS7203 Data Mining cou
 
 **New!** Comprehensive documentation for recalling assignment content and interview preparation:
 
+- ⚡ **[QUICK_RECALL.md](./QUICK_RECALL.md)** - 5-minute quick recall sheet (中文为主) **← Start Here!**
 - 📖 **[ASSIGNMENT_SUMMARY.md](./ASSIGNMENT_SUMMARY.md)** - Complete project overview with bilingual content (中英文)
 - 💼 **[INTERVIEW_GUIDE.md](./INTERVIEW_GUIDE.md)** - Detailed interview preparation guide with Q&A templates
 - 📋 **[TECHNICAL_REFERENCE.md](./TECHNICAL_REFERENCE.md)** - Quick reference card for technical details
+
+### Quick Start Guide:
+1. **5 minutes before interview** → Read [QUICK_RECALL.md](./QUICK_RECALL.md)
+2. **Preparing for interview** → Study [INTERVIEW_GUIDE.md](./INTERVIEW_GUIDE.md)
+3. **Need technical details** → Check [TECHNICAL_REFERENCE.md](./TECHNICAL_REFERENCE.md)
+4. **Complete overview** → Review [ASSIGNMENT_SUMMARY.md](./ASSIGNMENT_SUMMARY.md)
 
 These documents help you:
 - ✅ Quickly recall what you've accomplished in this course
